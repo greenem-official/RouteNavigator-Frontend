@@ -1,0 +1,17 @@
+:root {
+    --main-active-color: hsl(211, 100%, 50%);
+    --main-slightly-active-color: hsl(211, 100%, 97%);
+    --main-stronger-active-color: hsl(211, 100%, 85%);
+    --main-briht-calm-color: hsl(210, 25%, 31%);
+    --active-text: var(--main-active-color);
+    --inactive-text: black;
+    --slight-active-tint: var(--main-slightly-active-color);
+    --active-flat-button: var(--main-active-color);
+    --available-flat-button: var(--main-stronger-active-color);
+    --inactive-flat-button: #ffffff;
+    --bright-text-color: white;
+    --dark-text-color: #202020;
+    --slight-border: #eee;
+    --strong-border: #353535;
+    --colored-border: var(--main-active-color);
+}
