@@ -14,7 +14,7 @@
 .footer {
   align-items: center;
   width: 100%;
-  background-color: var(--main-briht-calm-color);
+  background-color: var(--header-footer-color);
   border-radius: 10px;
   color: var(--bright-text-color);
 }

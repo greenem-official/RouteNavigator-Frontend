@@ -29,7 +29,7 @@
     <div class="expandable-part" @click.stop>
       <div v-if="isActive" class="additional-info">
         <div class="buy-section">
-          <button class="buy-button">Купить</button>
+          <button class="buy-button" @click="handleBuyButtonClick">Купить</button>
         </div>
       </div>
     </div>
@@ -40,6 +40,8 @@
 import { computed } from 'vue';
 import type { Route } from '../../interfaces/Route.ts'
 import type { Moment } from "moment-timezone";
+import {useAuthStore} from "../../stores/AuthStore.ts";
+import {useRouter} from "vue-router";
 
 interface RouteItemProps {
   route: Route;
@@ -49,6 +51,9 @@ interface RouteItemProps {
 }
 
 const props = defineProps<RouteItemProps>();
+
+const router = useRouter();
+const authStore = useAuthStore();
 
 const formattedDepartureTime = computed(() =>
     props.formatDateFunc(props.route.departureTime)
@@ -60,6 +65,18 @@ const formattedArrivalTime = computed(() =>
 const formattedPrice = computed(() => {
   return props.route.price.toLocaleString('ru-RU');
 });
+
+const handleBuyButtonClick = () => {
+  if (!authStore.isUserAuthenticated) {
+    router.push({ name: 'Login' });
+  } else {
+    performPayment();
+  }
+};
+
+const performPayment = () => {
+  console.log('Payment');
+};
 
 // watch(
 //     () => props.isActive,

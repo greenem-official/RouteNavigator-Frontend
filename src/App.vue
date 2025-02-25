@@ -11,6 +11,10 @@
 <script setup lang="ts">
 import Header from './components/important/Header.vue';
 import Footer from "./components/important/Footer.vue";
+import {useAuthStore} from "./stores/AuthStore.ts";
+
+const authStore = useAuthStore();
+authStore.initializeStore();
 </script>
 
 <style scoped>
@@ -27,22 +31,9 @@ import Footer from "./components/important/Footer.vue";
   padding: 2rem; /* Отступы для основного контента */
 }
 
-
 .container a {
   display: block; /* Делаем ссылки блочными */
   margin-bottom: 10px; /* Добавляем отступ между картинками */
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
 </style>

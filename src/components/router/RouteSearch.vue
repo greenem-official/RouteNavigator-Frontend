@@ -120,8 +120,11 @@ import type { Route } from "../../interfaces/Route.ts";
 import RouteList from "../general/RouteList.vue";
 import {Location} from "../../interfaces/Location.ts";
 import {ApiService} from "../../api/ApiService.ts";
+import {useAuthStore} from "../../stores/AuthStore.ts";
 
 const activeTab = ref<'simple' | 'calendar'>('simple');
+
+const authStore = useAuthStore();
 
 const containerWidth = computed(() => {
   // console.log('containerWidth');

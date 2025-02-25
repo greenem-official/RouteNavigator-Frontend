@@ -80,7 +80,7 @@ input, select {
   justify-content: center;
   align-items: center;
   /*margin: 0 !important;*/
-  padding: 2rem;
+  padding: 0.5rem;
   text-align: center;
 }
 
