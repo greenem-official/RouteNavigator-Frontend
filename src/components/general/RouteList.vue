@@ -12,17 +12,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import RouteItem from './RouteItem.vue'; // Импортируем компонент RouteItem
-import type { RouteInterface } from '../../interfaces/Route.ts';
+import {type PropType, ref} from 'vue';
+import RouteItem from './RouteItem.vue';
+import type { Route } from '../../interfaces/Route.ts';
+import type {Moment} from "moment-timezone";
 
 const props = defineProps({
   routes: {
-    type: Array as () => RouteInterface[],
+    type: Array as PropType<Route[]>,
     required: true,
   },
   formatDateFunc: {
-    type: Function,
+    type: Function as PropType<(date: Moment) => string>,
     required: true,
   },
 });
@@ -30,12 +31,11 @@ const props = defineProps({
 const activeIndex = ref<number | null>(null);
 
 const setActiveIndex = (index: number) => {
-  console.log(activeIndex.value, index)
+  // console.log(activeIndex.value, index)
   activeIndex.value = activeIndex.value === index ? null : index;
 };
 </script>
 
 <style scoped>
-.route-list {
-}
+
 </style>

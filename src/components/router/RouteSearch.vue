@@ -2,7 +2,6 @@
   <div class="search-page">
     <h1>Поиск маршрутов</h1>
     <div class="layout">
-      <!-- Левая часть: Результаты поиска и календарь -->
       <div class="tabs-container" :style="{ width: containerWidth + 'px' }">
         <div class="tabs">
           <button
@@ -46,7 +45,6 @@
         </div>
       </div>
 
-      <!-- Правая часть: Форма поиска -->
       <div class="filters">
         <form> <!--@submit.prevent="searchRoutes"-->
           <div class="from-to-group">
@@ -104,11 +102,17 @@
             </div>
           </div>
           <div class="updateRoutes">
-            <button type="button" class="updateRoutesBtn" @click="searchRoutes(activeTab)" >Обновить маршруты</button>
+            <button type="button" class="updateRoutesBtn" @click="updateRoutes" >Обновить маршруты</button>
           </div>
         </form>
       </div>
     </div>
+    <Modal :isOpen="modalStore.isOpen" @close="modalStore.closeModal">
+      <div>
+        <p>Покупка успешна</p>
+        <p>Вы можете просмотреть список своих заказов в <router-link to="/orders">Изменении заказов</router-link></p>
+      </div>
+    </Modal>
   </div>
 </template>
 
@@ -120,11 +124,14 @@ import type { Route } from "../../interfaces/Route.ts";
 import RouteList from "../general/RouteList.vue";
 import {Location} from "../../interfaces/Location.ts";
 import {ApiService} from "../../api/ApiService.ts";
-import {useAuthStore} from "../../stores/AuthStore.ts";
+import Modal from "../general/Modal.vue";
+import {useModalStore} from "../../stores/ModalStore.ts";
 
 const activeTab = ref<'simple' | 'calendar'>('simple');
+// const modalRef = ref<InstanceType<typeof Modal> | null>(null); // ref="modalRef"
 
-const authStore = useAuthStore();
+// const authStore = useAuthStore();
+const modalStore = useModalStore();
 
 const containerWidth = computed(() => {
   // console.log('containerWidth');
@@ -141,6 +148,13 @@ const indicatorStyle = computed(() => {
 
 const mainTimeZone = 'Europe/Moscow';
 const userTimeZone = ref<string>(mainTimeZone);
+
+// const showModal = ref(false);
+
+// provide('showModal', showModal);
+// provide('closeModal', () => {
+//   isOpen.value = false;
+// });
 
 function getFormattedMomentDateSimple(moment: Moment) {
   return moment.format('YYYY-MM-DD');
@@ -205,8 +219,8 @@ onMounted(async () => {
     firstLocationOptions.value = firstLocations;
     secondLocationOptions.value = secondLocations;
 
-    searchRoutes("simple");
-    searchRoutes("calendar");
+    searchRoutes(null, "simple");
+    searchRoutes(selectedDate.value, "calendar");
   } catch (error) {
     console.error('Ошибка при загрузке данных:', error);
   }
@@ -229,19 +243,29 @@ const calendarDays = ref<{ date: Moment; hasRoutes: boolean }[]>([]);
 const selectedDate = ref<Moment>(moment(new Date(searchParams.value.date)).tz(userTimeZone.value));
 // console.log('selectedDate:', selectedDate.value); // extractDateFromMoment(selectedDate.value)
 
-function momentToUniqueString(date: Moment) {
+function momentToUniqueString(date: Moment | null) {
+  if (!date) return 'null';
   return date.format('YYYY-MM-DD');
 }
 
 const routesForDate = computed(() => {
-  // console.log("routesForDate");
-  return routesCalendar.value[momentToUniqueString(selectedDate.value)];
+  const result = routesCalendar.value[momentToUniqueString(selectedDate.value)];
+  if (!result) return []
+  // console.log("routesForDate", momentToUniqueString(selectedDate.value), result);
+  return result;
 });
 
-const searchRoutes = (mode: string) => {
-  console.log('Поиск маршрутов:'); //, searchParams.value);
-  const date = momentToUniqueString(selectedDate.value); // searchParams.value.date
-  console.log(date);
+const updateRoutes = () => {
+  if (activeTab.value === 'simple') {
+    searchRoutes(null, activeTab.value);
+  } else {
+    searchRoutes(selectedDate.value, activeTab.value);
+  }
+}
+
+const searchRoutes = (mom: Moment | null, mode: string) => {
+  const date = momentToUniqueString(mom); // searchParams.value.date // selectedDate.value
+  // console.log('Поиск маршрутов', mode, date);
   if (mode == 'calendar') {
     // routesCalendar.value[date] = [];
     ApiService.getRoutes(searchParams, selectedDate.value.toISOString(), false).then(res => { routesCalendar.value[date] = res })
@@ -258,9 +282,10 @@ const swapLocations = () => {
 };
 
 const selectDate = (date: Moment) => {
-  selectedDate.value = date.clone().tz(userTimeZone.value);
   // console.log('Выбрана дата:', selectedDate.value);
-  searchRoutes("calendar");
+  const newDate = date.clone().tz(userTimeZone.value);
+  searchRoutes(newDate, "calendar");
+  selectedDate.value = newDate;
 };
 
 const generateCalendar = () => {
@@ -302,6 +327,7 @@ watch(() => searchParams.value.date, generateCalendar, { immediate: true });
 <style scoped>
 .search-page {
   text-align: left;
+  position: relative;
 }
 
 /*//.search-page {
@@ -521,5 +547,4 @@ input, select {
   overflow-y: auto;
   padding: 0 10px;
 }
-
 </style>

@@ -6,3 +6,7 @@ export interface AuthData {
     token: string,
     expires: Moment
 }
+
+export interface ErrorMessage {
+    error: string;
+}

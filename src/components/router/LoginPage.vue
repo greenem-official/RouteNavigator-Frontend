@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import {computed, ref} from "vue";
 import {useAuthStore} from "../../stores/AuthStore.ts";
-import moment from "moment-timezone";
-import {ApiService} from "../../api/ApiService.ts";
+import {translateMessage} from "../../localization/MessageTranslator.ts";
+import router from "../../../router";
 
 const authStore = useAuthStore();
 
 const activeTab = ref<'login' | 'register'>('login');
+const errorMessage = ref<string>('');
 
 const authParams = ref({
   email: "",
@@ -18,10 +19,23 @@ const authParams = ref({
 // Functionality
 
 const submitForm = () => {
+  console.log("submit form");
   if (activeTab.value === 'login') {
-    authStore.login({ email: authParams.value.email, password: authParams.value.password });
+    authStore.login({ email: authParams.value.email, password: authParams.value.password }).then((res) => {
+      errorMessage.value = '';
+      if (res) errorMessage.value = res.error;
+      else {
+        router.push('/');
+      }
+    });
   } else {
-    authStore.register({ email: authParams.value.email, username: authParams.value.username, password: authParams.value.password });
+    authStore.register({ email: authParams.value.email, username: authParams.value.username, password: authParams.value.password }).then((res) => {
+      errorMessage.value = '';
+      if (res) errorMessage.value = res.error;
+      else {
+        router.push('/');
+      }
+    });
   }
 }
 
@@ -54,27 +68,60 @@ const indicatorStyle = computed(() => {
       </button>
       <div class="tab-indicator" :style="indicatorStyle"></div>
     </div>
-    <div class="auth-form">
-      <div class="input-section">
-        <label class="info-label">Email</label>
-        <input class="info-input" v-model="authParams.email" type="text" />
+    <!-- Auth form -->
+    <form @submit.prevent="submitForm">
+      <div class="auth-form">
+        <div class="input-section">
+          <label class="info-label">Email</label>
+          <input
+              class="info-input"
+              v-model="authParams.email"
+              type="email"
+              autocomplete="username"
+              :required="activeTab === 'login' || activeTab === 'register'"
+          />
+        </div>
+
+        <div class="input-section" v-if="activeTab === 'register'">
+          <label class="info-label">Имя пользователя</label>
+          <input
+              class="info-input"
+              v-model="authParams.username"
+              type="text"
+              autocomplete="username"
+              required
+          />
+        </div>
+
+        <div class="input-section">
+          <label class="info-label">Пароль</label>
+          <input
+              class="info-input"
+              v-model="authParams.password"
+              type="password"
+              :autocomplete="activeTab === 'login' ? 'current-password' : 'new-password'"
+              :required="activeTab === 'login' || activeTab === 'register'"
+          />
+        </div>
+
+        <div class="input-section" v-if="activeTab === 'register'">
+          <label class="info-label">Повтор пароля</label>
+          <input
+              class="info-input"
+              v-model="authParams.passwordCheck"
+              type="password"
+              autocomplete="new-password"
+              required
+          />
+        </div>
+        <div class="error-section">
+          <label class="error-label"> {{ translateMessage(errorMessage) }} </label>
+        </div>
+        <button class="submit-button" type="submit">
+          {{ activeTab === 'login' ? 'Войти' : 'Зарегистрироваться' }}
+        </button>
       </div>
-      <div class="input-section" v-if="activeTab==='register'">
-        <label class="info-label">Имя пользователя</label>
-        <input class="info-input" v-model="authParams.username" type="text" />
-      </div>
-      <div class="input-section">
-        <label class="info-label">Пароль</label>
-        <input class="info-input" v-model="authParams.password" type="text" />
-      </div>
-      <div class="input-section" v-if="activeTab==='register'">
-        <label class="info-label">Повтор пароля</label>
-        <input class="info-input" v-model="authParams.passwordCheck" type="text" />
-      </div>
-      <button class="submit-button" @click="submitForm">
-        {{ activeTab === 'login' ? 'Войти' : 'Зарегистрироваться' }}
-      </button>
-    </div>
+    </form>
   </div>
 </div>
 </template>
@@ -164,6 +211,18 @@ const indicatorStyle = computed(() => {
   background-color: var(--main-brihter-calm-color);;
   outline: none; /* Убираем стандартный outline */
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Тень при фокусе */
+}
+
+.error-section {
+  display: flex;
+  margin: 2px;
+  justify-content: start;
+  text-align: start;
+}
+
+.error-label {
+  color: #cf5858;
+  font-weight: bold;
 }
 
 .submit-button {

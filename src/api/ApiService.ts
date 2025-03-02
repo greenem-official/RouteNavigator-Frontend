@@ -2,7 +2,7 @@ import {Location} from "../interfaces/Location.ts";
 import axios from "axios";
 import moment, {duration} from "moment-timezone";
 import type {Route} from "../interfaces/Route.ts";
-import type {AuthData} from "../interfaces/AuthTypes.ts";
+import type {AuthData, ErrorMessage} from "../interfaces/AuthTypes.ts";
 // import { plainToInstance } from "class-transformer";
 
 export class ApiService {
@@ -25,7 +25,7 @@ export class ApiService {
         }
     }
 
-    public static async login(email: string, password: string): Promise<AuthData> {
+    public static async login(email: string, password: string): Promise<AuthData | ErrorMessage> {
         try {
             const response = await axios({
                 method: 'post',
@@ -61,7 +61,7 @@ export class ApiService {
             const data = response.data;
             return data;
         } catch (error) {
-            console.error('Error during login:', error);
+            console.error('Error during register:', error);
             throw error;
         }
     }

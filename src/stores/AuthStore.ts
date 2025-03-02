@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
-import type {Moment} from "moment-timezone";
 import {ApiService} from "../api/ApiService.ts";
-import type {AuthData} from "../interfaces/AuthTypes.ts";
+import type {AuthData, ErrorMessage} from "../interfaces/AuthTypes.ts";
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -16,20 +15,43 @@ export const useAuthStore = defineStore('auth', {
                 this.$state = JSON.parse(savedState);
             }
         },
-        login(credentials: { email: string; password: string }) {
-            ApiService.login(credentials.email, credentials.password).then(data => {
-                this.authData = data;
-                this.isAuthenticated = true;
+        saveStore() {
+            localStorage.setItem('authStore', JSON.stringify(this.$state));
+        },
+        login(credentials: { email: string; password: string }): Promise<ErrorMessage | null> {
+            console.log("login...");
+            return ApiService.login(credentials.email, credentials.password).then(data => {
+                    if ("error" in data) {
+                        return data as ErrorMessage;
+                    }
 
-                localStorage.setItem('authStore', JSON.stringify(this.$state));
+                    this.authData = data as AuthData;
+                    this.isAuthenticated = true;
+
+                    console.log(this.authData);
+
+                    this.saveStore();
+                    return null;
+            }).catch(reason => {
+                return {'error': reason } as ErrorMessage;
             });
         },
-        register(credentials: { email: string; username: string, password: string }) {
-            ApiService.register(credentials.email, credentials.username, credentials.password).then(data => {
+        register(credentials: { email: string; username: string, password: string }): Promise<ErrorMessage | null> {
+            console.log("register...");
+            return ApiService.register(credentials.email, credentials.username, credentials.password).then(data => {
+                if ("error" in data) {
+                    return data as ErrorMessage;
+                }
+
                 this.authData = data;
                 this.isAuthenticated = true;
 
-                localStorage.setItem('authStore', JSON.stringify(this.$state));
+                console.log(this.authData);
+
+                this.saveStore();
+                return null;
+            }).catch(reason => {
+                return {'error': reason } as ErrorMessage;
             });
         },
         logout() {

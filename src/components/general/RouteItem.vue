@@ -37,11 +37,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import {computed, inject, type PropType} from 'vue';
 import type { Route } from '../../interfaces/Route.ts'
 import type { Moment } from "moment-timezone";
 import {useAuthStore} from "../../stores/AuthStore.ts";
 import {useRouter} from "vue-router";
+import {useModalStore} from "../../stores/ModalStore.ts";
 
 interface RouteItemProps {
   route: Route;
@@ -54,6 +55,7 @@ const props = defineProps<RouteItemProps>();
 
 const router = useRouter();
 const authStore = useAuthStore();
+const modalStore = useModalStore();
 
 const formattedDepartureTime = computed(() =>
     props.formatDateFunc(props.route.departureTime)
@@ -75,15 +77,9 @@ const handleBuyButtonClick = () => {
 };
 
 const performPayment = () => {
-  console.log('Payment');
+  modalStore.openModal();
 };
 
-// watch(
-//     () => props.isActive,
-//     (newVal) => {
-//       console.log(`RouteItem isActive changed to: ${newVal}`);
-//     }
-// );
 </script>
 
 <style scoped>

@@ -10,7 +10,7 @@
           <nav class="footer-nav">
             <ul>
               <router-link :to="{ name: 'Search' }">Поиск</router-link>
-              <router-link :to="{ name: 'ManageOrders' }">Изменение</router-link>
+              <router-link :to="{ name: 'Orders' }">Изменение</router-link>
             </ul>
           </nav>
         </div>
@@ -18,7 +18,9 @@
           <button class="login-button" @click="navigateToLogin">Войти</button>
         </div>
         <div v-else class="authenticated-container">
-          <div class="authenticated-username hover-underline" @click="navigateToAccount"> {{ authStore.authData?.userUsername }} </div>
+          <div class="authenticated-username hover-underline" @click="navigateToAccount">
+            {{ authStore.authData?.userUsername || "Аккаунт" }}
+          </div>
         </div>
       </div>
     </div>
