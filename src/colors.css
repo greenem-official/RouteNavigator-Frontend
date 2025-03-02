@@ -17,7 +17,11 @@
     --bright-text-color: white;
     --dark-color: #555555;
     --very-slight-gray-color: #fafafa;
+    --main-gray-3: hsl(0, 0%, 94%);
+    --main-gray-5: hsl(0, 0%, 89%);
     --slight-border: #eee;
     --strong-border: #353535;
     --colored-border: var(--main-active-color);
+    --main-active-4: hsl(214, 50%, 99%);
+    --main-active-10: hsl(212, 79%, 93%);
 }

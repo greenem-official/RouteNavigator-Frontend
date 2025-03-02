@@ -73,10 +73,44 @@ input, select {
   /*outline-color: solid var(--slight-active-tint);*/
 }
 
+/* Input, from login */
+
+.main-input {
+  display: flex;
+  width: 100%;
+  padding: 7px;
+  border: 1px solid var(--main-medium-active-color);
+  border-radius: 5px;
+  font-size: 1rem;
+  color: var(--dark-color);
+  background-color: var(--main-very-slightly-active-color);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.main-input:focus {
+  border-color: var(--active-text); /* Цвет границы при фокусе */
+  background-color: var(--main-brihter-calm-color);;
+  outline: none; /* Убираем стандартный outline */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Тень при фокусе */
+}
+
+/* Button */
+.main-button {
+  background-color: var(--main-medium-active-color);
+  color: var(--bright-text-color);
+  font-weight: bold;
+  /*margin: 0.8rem 0;*/
+}
+
+.main-button:hover {
+  background-color: var(--main-slightly2-active-color);
+}
+
 #app {
   /*max-width: 1920px;*/
   /*height: 100vh;*/
   /*width: 100vw;*/
+  width: 100%;
   justify-content: center;
   align-items: center;
   /*margin: 0 !important;*/

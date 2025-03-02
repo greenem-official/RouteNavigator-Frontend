@@ -46,11 +46,11 @@
       </div>
 
       <div class="filters">
-        <form> <!--@submit.prevent="searchRoutes"-->
+        <form class="filters-form"> <!--@submit.prevent="searchRoutes"-->
           <div class="from-to-group">
             <div>
               <label for="from">Откуда:</label>
-              <input id="from" v-model="searchParams.from" type="text" list="fromLocationOptions" />
+              <input id="from" class="main-input" v-model="searchParams.from" type="text" list="fromLocationOptions" />
               <datalist id="fromLocationOptions">
                 <option v-for="option in firstLocationOptions" :key="option.code" :value="option.displayName">
                   {{ option.displayName }}
@@ -64,7 +64,7 @@
             </div>
             <div>
               <label for="to">Куда:</label>
-              <input id="to" v-model="searchParams.to" type="text" list="toLocationOptions" />
+              <input id="to" class="main-input" v-model="searchParams.to" type="text" list="toLocationOptions" />
               <datalist id="toLocationOptions">
                 <option v-for="option in secondLocationOptions" :key="option.code" :value="option.displayName">
                   {{ option.displayName }}
@@ -76,11 +76,11 @@
             <div class="filterDateAndTime">
               <div>
                 <label for="date">Дата:</label>
-                <input id="date" class="filterDateTime" v-model="searchParams.date" type="date" required />
+                <input id="date" class="main-input filterDateTime" v-model="searchParams.date" type="date" required />
               </div>
               <div>
                 <label for="time">Время:</label>
-                <input id="time" class="filterDateTime" v-model="searchParams.time" type="time" required />
+                <input id="time" class="main-input filterDateTime" v-model="searchParams.time" type="time" required />
               </div>
             </div>
             <div class="transportType">
@@ -102,7 +102,7 @@
             </div>
           </div>
           <div class="updateRoutes">
-            <button type="button" class="updateRoutesBtn" @click="updateRoutes" >Обновить маршруты</button>
+            <button type="button" class="main-button updateRoutesBtn" @click="updateRoutes" >Обновить маршруты</button>
           </div>
         </form>
       </div>
@@ -198,7 +198,7 @@ function formatMomentForCalendar(date: Moment) {
 const searchParams = ref({
   from: "",
   to: '',
-  ...getFormattedMoment(moment().add(2, "days")),
+  ...getFormattedMoment(moment().add(0, "days")),
   transportType: {
     "transport_plane": true,
     "transport_train": true,
@@ -350,6 +350,7 @@ watch(() => searchParams.value.date, generateCalendar, { immediate: true });
   display: flex;
   position: relative;
   border-bottom: 2px solid var(--slight-border);
+  user-select: none;
 }
 
 button {
@@ -373,10 +374,15 @@ button:hover {
   text-align: center;
   position: relative;
   color: var(--inactive-text);
+  font-weight: 600;
 }
 
 .tab-button:hover {
   background-color: var(--slight-active-tint);
+}
+
+.tab-button:focus {
+  outline: none;
 }
 
 .tab-button.active {
@@ -450,16 +456,17 @@ input, select {
 }
 
 .swap-button {
+  margin: 0 10px;
   background-color: var(--inactive-flat-button);
   border: var(--strong-border) 1px solid;
   border-radius: 5px;
   cursor: pointer;
-  padding: 0; /* Убираем внутренние отступы */
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 25px; /* Фиксированная ширина */
-  height: 25px; /* Фиксированная высота */
+  width: 25px;
+  height: 25px;
 }
 
 .swap-button:hover {
@@ -537,9 +544,14 @@ input, select {
 
 /*Update routes button*/
 
-.updateRoutesBtn:hover {
-  background-color: var(--main-stronger-active-color);
+.updateRoutes {
+  display: flex;
+  align-items: start;
 }
+
+/*.updateRoutesBtn:hover {
+  background-color: var(--main-stronger-active-color);
+}*/
 
 .scrollable-container {
   min-height: 450px;
@@ -547,4 +559,36 @@ input, select {
   overflow-y: auto;
   padding: 0 10px;
 }
+
+.scrollable-container::-webkit-scrollbar {
+  width: 18px;
+}
+
+.scrollable-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+  background: #007bff;
+  border-radius: 10px;
+  border: 3px solid #f1f1f1;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb:hover {
+  background: #0056b3;
+}
+
+/* Filters frame */
+.filters {
+  margin: 20px;
+}
+
+.filters-form {
+  padding: 20px;
+  border: 2px solid var(--main-gray-3);
+  border-radius: 5px;
+  box-shadow: 8px 8px 20px 4px rgba(0, 0, 0, 0.07);
+}
+
 </style>

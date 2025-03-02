@@ -16,6 +16,13 @@ const authParams = ref({
   passwordCheck: "",
 });
 
+// Animations
+
+const containerWidth = computed(() => {
+  // console.log('containerWidth');
+  return activeTab.value === 'login' ? 300 : 330;
+});
+
 // Functionality
 
 const submitForm = () => {
@@ -68,9 +75,8 @@ const indicatorStyle = computed(() => {
       </button>
       <div class="tab-indicator" :style="indicatorStyle"></div>
     </div>
-    <!-- Auth form -->
-    <form @submit.prevent="submitForm">
-      <div class="auth-form">
+    <form @submit.prevent="submitForm" class="actual-form">
+      <div class="auth-form" :style="{ width: containerWidth + 'px' }">
         <div class="input-section">
           <label class="info-label">Email</label>
           <input
@@ -137,6 +143,7 @@ const indicatorStyle = computed(() => {
 }
 
 .auth-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -156,10 +163,11 @@ const indicatorStyle = computed(() => {
   display: flex;
   width: 100%;
   justify-content: center;
+  background-color: var(--main-active-4);
 }
 
 .tab-button.active {
-  background-color: var(--main-slightly-active-color);
+  background-color: var(--main-active-10);
 }
 
 .tab-indicator {
@@ -172,9 +180,21 @@ const indicatorStyle = computed(() => {
   transition: transform 0.15s ease;
 }
 
+.actual-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .auth-form {
   margin: 1.5rem;
-  width: 70%;
+  /*align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;*/
+  /*width: 90%;*/
+  transition: width 0.3s ease;
   padding: 15px 30px;
   background-color: var(--very-slight-gray-color);
   border-radius: 5px;

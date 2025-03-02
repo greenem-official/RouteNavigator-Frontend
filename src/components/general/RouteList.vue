@@ -5,6 +5,7 @@
         :key="index"
         :route="route"
         :formatDateFunc="formatDateFunc"
+        :format="'editing'"
         :isActive="activeIndex === index"
         :onClickFunc="() => setActiveIndex(index)"
     />
@@ -12,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+// booking editing
+
 import {type PropType, ref} from 'vue';
 import RouteItem from './RouteItem.vue';
 import type { Route } from '../../interfaces/Route.ts';

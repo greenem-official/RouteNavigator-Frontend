@@ -28,8 +28,18 @@
     </div>
     <div class="expandable-part" @click.stop>
       <div v-if="isActive" class="additional-info">
-        <div class="buy-section">
-          <button class="buy-button" @click="handleBuyButtonClick">Купить</button>
+        <div class="additional-info-area">
+          <div v-if="format === 'booking'">
+            <div class="buy-section">
+              <button class="buy-button" @click="handleBuyButtonClick">Купить</button>
+            </div>
+          </div>
+          <div v-if="format === 'editing'">
+            <div class="edit-section">
+              <input type="number" placeholder="Число билетов" class="main-input removeAmount" min="0">
+              <button class="main-button modify-button" @click="handleModifyButtonClick">Убрать</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -37,16 +47,18 @@
 </template>
 
 <script setup lang="ts">
-import {computed, inject, type PropType} from 'vue';
+import {computed} from 'vue';
 import type { Route } from '../../interfaces/Route.ts'
 import type { Moment } from "moment-timezone";
 import {useAuthStore} from "../../stores/AuthStore.ts";
 import {useRouter} from "vue-router";
 import {useModalStore} from "../../stores/ModalStore.ts";
+import {ApiService} from "../../api/ApiService.ts";
 
 interface RouteItemProps {
   route: Route;
   formatDateFunc: (date: Moment) => string;
+  format: string;
   isActive: boolean;
   onClickFunc: () => void;
 }
@@ -76,8 +88,21 @@ const handleBuyButtonClick = () => {
   }
 };
 
+const handleModifyButtonClick = () => {
+
+};
+
 const performPayment = () => {
-  modalStore.openModal();
+  ApiService.bookRoute(props.route.id, 1).then((res) => {
+    if ("message" in res) {
+      if (res["message"] === "route_booking_success") {
+        modalStore.openModal();
+      }
+    }
+    else if ("error" in res) {
+      console.error("Error on booking a route: ", res["error"]);
+    }
+  });
 };
 
 </script>
@@ -169,6 +194,17 @@ const performPayment = () => {
   padding: 8px 16px;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.edit-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  gap: 10px;
+}
+
+.removeAmount {
+  width: 150px;
 }
 
 @keyframes slide-down {

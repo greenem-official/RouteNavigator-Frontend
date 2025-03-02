@@ -3,10 +3,16 @@ import axios from "axios";
 import moment, {duration} from "moment-timezone";
 import type {Route} from "../interfaces/Route.ts";
 import type {AuthData, ErrorMessage} from "../interfaces/AuthTypes.ts";
+import {useAuthStore} from "../stores/AuthStore.ts";
+import type {Booking} from "../interfaces/Booking.ts";
 // import { plainToInstance } from "class-transformer";
 
 export class ApiService {
     private static readonly API_URL = 'http://127.0.0.1:8080/api/main';
+
+    private static getAuthStore() {
+        return useAuthStore();
+    }
 
     public static async getLocations(text: string): Promise<Location[]> {
         try {
@@ -93,7 +99,83 @@ export class ApiService {
             return data;
             // return plainToInstance(Location, data);
         } catch (error) {
-            console.error('Error fetching locations:', error);
+            console.error('Error fetching routes:', error);
+            throw error;
+        }
+    }
+
+    public static async bookRoute(routeId: number, amount: number): Promise<any> {
+        try {
+            const response = await axios({
+                method: 'post',
+                url: `${this.API_URL}/bookRoute`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": `${ApiService.getAuthStore().authData?.token}`,
+                },
+                data: {
+                    "routeId": routeId,
+                    "ticketsAmount": amount,
+                }
+            });
+
+            const data = response.data;
+            // for (const route of data) {}
+
+            return data;
+            // return plainToInstance(Location, data);
+        } catch (error) {
+            console.error('Error booking a route:', error);
+            throw error;
+        }
+    }
+
+    public static async modifyBooking(bookingId: number, setAmount: number): Promise<any> {
+        try {
+            const response = await axios({
+                method: 'post',
+                url: `${this.API_URL}/modifyBooking`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": `${ApiService.getAuthStore().authData?.token}`,
+                },
+                data: {
+                    "bookingId": bookingId,
+                    "setTicketsAmount": setAmount,
+                }
+            });
+
+            const data = response.data;
+            // for (const route of data) {}
+
+            return data;
+            // return plainToInstance(Location, data);
+        } catch (error) {
+            console.error('Error on modifying a route:', error);
+            throw error;
+        }
+    }
+
+    public static async getBookings(): Promise<Booking[]> {
+        try {
+            const response = await axios({
+                method: 'post',
+                url: `${this.API_URL}/getBookings`,
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": `${ApiService.getAuthStore().authData?.token}`,
+                },
+            });
+
+            const data = response.data;
+            for (const route of data) {
+                route["bookedAt"] = moment(route["bookedAt"])
+            }
+
+            return data;
+            // return plainToInstance(Location, data);
+        } catch (error) {
+            console.error('Error booking a route:', error);
             throw error;
         }
     }
