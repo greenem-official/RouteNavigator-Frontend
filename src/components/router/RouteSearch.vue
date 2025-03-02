@@ -1,6 +1,6 @@
 <template>
   <div class="search-page">
-    <h1>Поиск маршрутов</h1>
+    <h1 class="title">Поиск маршрутов</h1>
     <div class="layout">
       <div class="tabs-container" :style="{ width: containerWidth + 'px' }">
         <div class="tabs">
@@ -30,7 +30,7 @@
             <div
                 v-for="day in calendarDays"
                 :key="getFormattedMomentDateSimple(day.date)"
-                :class="{ 'available': day.hasRoutes, 'selected': extractDateFromMoment(day.date) === extractDateFromMoment(selectedDate) }"
+                :class="{ 'available': isDayAvailable(day.date), 'selected': extractDateFromMoment(day.date) === extractDateFromMoment(selectedDate) }"
                 @click="selectDate(day.date)"
             >
               {{ formatMomentForCalendar(day.date) }}
@@ -221,6 +221,7 @@ onMounted(async () => {
 
     searchRoutes(null, "simple");
     searchRoutes(selectedDate.value, "calendar");
+    refreshAvailableCalendarDays();
   } catch (error) {
     console.error('Ошибка при загрузке данных:', error);
   }
@@ -239,9 +240,31 @@ const routesCalendar = ref<Record<string, Route[]>>({
   // ],
 });
 
+const calendarDaysAvailable = ref<Moment[]>([]);
+
 const calendarDays = ref<{ date: Moment; hasRoutes: boolean }[]>([]);
 const selectedDate = ref<Moment>(moment(new Date(searchParams.value.date)).tz(userTimeZone.value));
 // console.log('selectedDate:', selectedDate.value); // extractDateFromMoment(selectedDate.value)
+
+const refreshAvailableCalendarDays = () => {
+  ApiService.getAvailableRouteDays(searchParams, moment(searchParams.value.date).toISOString(), 14).then(result => {
+    calendarDaysAvailable.value = result;
+    // console.log(calendarDaysAvailable.value)
+  });
+};
+
+const isDayAvailable = (date: Moment): boolean => {
+  // console.log(date.format());
+  // let s = ""
+  // calendarDaysAvailable.value.forEach(value => s += value.format() + " ")
+  // console.log(s)
+  // console.log(calendarDaysAvailable.value.some((availableDate) =>
+  //     availableDate.isSame(date, 'day')
+  // ));
+  return calendarDaysAvailable.value.some((availableDate) =>
+      availableDate.isSame(date, 'day')
+  );
+};
 
 function momentToUniqueString(date: Moment | null) {
   if (!date) return 'null';
@@ -268,13 +291,14 @@ const searchRoutes = (mom: Moment | null, mode: string) => {
   // console.log('Поиск маршрутов', mode, date);
   if (mode == 'calendar') {
     // routesCalendar.value[date] = [];
-    ApiService.getRoutes(searchParams, selectedDate.value.toISOString(), false).then(res => { routesCalendar.value[date] = res })
+    ApiService.getRoutes(searchParams, selectedDate.value.toISOString(), true).then(res => { routesCalendar.value[date] = res })
   }
   else {
     // routesSimpleMode.value = [];
     const departureTimeMin = moment(searchParams.value.date).add(searchParams.value.time.split(':')[0], "hour").add(searchParams.value.time.split(':')[1], "minute").toISOString()
-    ApiService.getRoutes(searchParams, departureTimeMin, true).then(res => { routesSimpleMode.value = res })
+    ApiService.getRoutes(searchParams, departureTimeMin, false).then(res => { routesSimpleMode.value = res })
   }
+  refreshAvailableCalendarDays();
 };
 
 const swapLocations = () => {
@@ -328,6 +352,11 @@ watch(() => searchParams.value.date, generateCalendar, { immediate: true });
 .search-page {
   text-align: left;
   position: relative;
+}
+
+.title {
+  user-select: none;
+  font-size: 50px;
 }
 
 /*//.search-page {
@@ -419,8 +448,12 @@ button:hover {
   cursor: pointer;
 }
 
+.calendar > div {
+  user-select: none;
+}
+
 .calendar > div.available {
-  background-color: var(--available-flat-button);
+  background-color: var(--main-active-10);
 }
 
 .calendar > div.selected {

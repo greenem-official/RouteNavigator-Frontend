@@ -1,6 +1,6 @@
 import {Location} from "../interfaces/Location.ts";
 import axios from "axios";
-import moment, {duration} from "moment-timezone";
+import moment, {duration, type Moment} from "moment-timezone";
 import type {Route} from "../interfaces/Route.ts";
 import type {AuthData, ErrorMessage} from "../interfaces/AuthTypes.ts";
 import {useAuthStore} from "../stores/AuthStore.ts";
@@ -84,7 +84,7 @@ export class ApiService {
                     "departureLocation": searchParams.value.from,
                     "arrivalLocation": searchParams.value.to,
                     "departureTimeMin": departureTimeMin,
-                    "thisDateOnly": thisDateOnly,
+                    "fetchDays": thisDateOnly ? 1 : -1,
                     "transportAllowed": searchParams.value.transportType
                 }
             });
@@ -98,6 +98,40 @@ export class ApiService {
 
             return data;
             // return plainToInstance(Location, data);
+        } catch (error) {
+            console.error('Error fetching routes:', error);
+            throw error;
+        }
+    }
+
+    public static async getAvailableRouteDays(searchParams: any, departureTimeMin: any, daysAmount: number): Promise<Moment[]> {
+        try {
+            const response = await axios({
+                method: 'post',
+                url: `${this.API_URL}/findRoutes`,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: {
+                    "departureLocation": searchParams.value.from,
+                    "arrivalLocation": searchParams.value.to,
+                    "departureTimeMin": departureTimeMin,
+                    "fetchDays": daysAmount,
+                    "fetchAvailability" : true,
+                    "transportAllowed": searchParams.value.transportType
+                }
+            });
+
+            const data = response.data;
+
+            const newFormat: Moment[] = []
+            // console.log(data)
+            data.forEach((item: string) => {
+                // console.log(item)
+                newFormat.push(moment(Date.parse(item))); //.format('DD-MM'))
+            });
+
+            return newFormat;
         } catch (error) {
             console.error('Error fetching routes:', error);
             throw error;

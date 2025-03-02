@@ -23,17 +23,17 @@ authStore.initializeStore();
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  min-height: 100vh; /* Минимальная высота на весь экран, 100vh */
+  min-height: 120vh;
 }
 
 .content {
-  flex: 1; /* Занимает оставшееся пространство */
-  padding: 2rem; /* Отступы для основного контента */
+  flex: 1;
+  padding: 2rem;
 }
 
 .container a {
-  display: block; /* Делаем ссылки блочными */
-  margin-bottom: 10px; /* Добавляем отступ между картинками */
+  display: block;
+  margin-bottom: 10px;
 }
 
 </style>

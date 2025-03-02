@@ -88,6 +88,7 @@ export default defineComponent({
   align-items: center;
   display: flex;
   flex-direction: row;
+  user-select: none;
   /*margin-right: 70px;*/
 }
 
