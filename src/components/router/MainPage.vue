@@ -8,7 +8,7 @@ export default defineComponent({
 
 <template>
   <div class="home-page">
-    <div class="title">Route Navigation</div>
+    <div class="title">RouteNavigation</div>
     <div class="firstPhrase">Удобный маркетплейс пассажирских перевозок</div>
     <div class="secondPhrase">Найдите лучшие предложения на</div>
     <div class="listingOptions">

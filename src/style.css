@@ -1,5 +1,14 @@
 @import "/src/colors.css";
 
+* {
+  box-sizing: border-box;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -114,7 +123,7 @@ input, select {
   justify-content: center;
   align-items: center;
   /*margin: 0 !important;*/
-  padding: 0.5rem;
+  /*padding: 0.5rem;*/
   text-align: center;
 }
 

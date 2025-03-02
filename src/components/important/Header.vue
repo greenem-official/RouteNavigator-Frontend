@@ -1,10 +1,10 @@
 <template>
-  <footer class="footer">
-    <div class="footer-content">
+  <footer class="header">
+    <div class="header-content">
       <div class ="left-and-right">
         <div class="header-left">
           <div class="header-logo">
-            <router-link to="/" class="websiteTitle">Route Navigation</router-link>
+            <router-link to="/" class="websiteTitle">RouteNavigation</router-link>
           </div>
 
           <nav class="footer-nav">
@@ -55,20 +55,24 @@ export default defineComponent({
   /*line-height: 3;*/
   font-size: 30px;
   font-weight: bold;
-  color: #AAAAAA;
+  color: #2f79ca;
 }
 
-.footer {
+.header {
   width: 100%;
   background-color: var(--header-footer-color);
-  border-radius: 10px;
-  color: white;
+  border: solid var(--main-medium-active-color);
+  border-width: 0 0 4px 0;
+  font-weight: 600;
+  /*border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;*/
+  color: var(--main-active-color);
   padding: 1.5rem 0;
   align-items: center;
   justify-content: center;
 }
 
-.footer-content {
+.header-content {
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -102,7 +106,8 @@ export default defineComponent({
 }
 
 .footer-nav a {
-  color: white;
+  font-weight: 600;
+  color: var(--main-active-color);
   text-decoration: none;
 }
 
@@ -120,9 +125,9 @@ export default defineComponent({
 .login-button,
 .register-button {
   padding: 0.5rem 1rem;
-  background-color: #345983;
+  background-color: var(--main-slightly-active-color);
   border: 2px solid var(--main-stronger-active-color);
-  color: var(--bright-text-color);
+  color: var(--dark-color);
   border-radius: 4px;
   cursor: pointer;
   font-size: 1.2rem;
