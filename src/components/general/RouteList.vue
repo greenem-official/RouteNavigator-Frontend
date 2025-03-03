@@ -1,11 +1,12 @@
 <template>
   <div class="route-list">
     <RouteItem
-        v-for="(route, index) in routes"
+        v-for="(item, index) in items"
         :key="index"
-        :route="route"
+        :route="itemType === 'route' ? item as Route : null"
+        :booking="itemType === 'booking' ? item as Booking : null"
         :formatDateFunc="formatDateFunc"
-        :format="'editing'"
+        :format="format"
         :isActive="activeIndex === index"
         :onClickFunc="() => setActiveIndex(index)"
     />
@@ -15,20 +16,28 @@
 <script setup lang="ts">
 // booking editing
 
-import {type PropType, ref} from 'vue';
+import {computed, ref} from 'vue';
 import RouteItem from './RouteItem.vue';
 import type { Route } from '../../interfaces/Route.ts';
 import type {Moment} from "moment-timezone";
+import type {Booking} from "../../interfaces/Booking.ts";
 
-const props = defineProps({
-  routes: {
-    type: Array as PropType<Route[]>,
-    required: true,
-  },
-  formatDateFunc: {
-    type: Function as PropType<(date: Moment) => string>,
-    required: true,
-  },
+interface RouteListProps {
+  routes?: Route[]
+  bookings?: Booking[];
+  formatDateFunc: (date: Moment) => string;
+  format: string;
+}
+
+const props = defineProps<RouteListProps>();
+
+
+const items = computed(() => {
+  return props.routes || props.bookings || [];
+});
+
+const itemType = computed(() => {
+  return props.routes ? 'route' : 'booking';
 });
 
 const activeIndex = ref<number | null>(null);

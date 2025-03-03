@@ -145,6 +145,7 @@ export default defineComponent({
 .authenticated-username {
   font-size: 1.5rem;
   line-height: 0.8rem;
+  user-select: none;
 }
 
 .hover-underline {

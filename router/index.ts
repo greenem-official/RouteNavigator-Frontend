@@ -4,7 +4,7 @@ import MainPage from "../src/components/router/MainPage.vue";
 import RouteSearch from "../src/components/router/RouteSearch.vue";
 import LoginPage from "../src/components/router/LoginPage.vue";
 import {useAuthStore} from "../src/stores/AuthStore.ts";
-import ManageOrdersPage from "../src/components/router/ManageOrderedPage.vue";
+import ManageOrdersPage from "../src/components/router/ManageOrdersPage.vue";
 import AccountPage from "../src/components/router/AccountPage.vue";
 
 const routes = [

@@ -125,7 +125,7 @@ export class ApiService {
             const data = response.data;
 
             const newFormat: Moment[] = []
-            // console.log(data)
+            console.log(data)
             data.forEach((item: string) => {
                 // console.log(item)
                 newFormat.push(moment(Date.parse(item))); //.format('DD-MM'))
@@ -193,10 +193,9 @@ export class ApiService {
     public static async getBookings(): Promise<Booking[]> {
         try {
             const response = await axios({
-                method: 'post',
+                method: 'get',
                 url: `${this.API_URL}/getBookings`,
                 headers: {
-                    'Content-Type': 'application/json',
                     "Authorization": `${ApiService.getAuthStore().authData?.token}`,
                 },
             });

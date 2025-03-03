@@ -21,7 +21,7 @@
 
         <div v-if="activeTab === 'simple'" class="simple-mode">
           <div class="scrollable-container">
-            <RouteList :routes="routesSimpleMode" :formatDateFunc="getFormattedMomentUserTZCombined" />
+            <RouteList :routes="routesSimpleMode" :formatDateFunc="getFormattedMomentUserTZCombined" format="booking" />
           </div>
         </div>
 
@@ -39,7 +39,7 @@
 
           <div class="routes-for-date">
             <div class="scrollable-container">
-              <RouteList :routes="routesForDate" :formatDateFunc="getFormattedMomentUserTZCombined" />
+              <RouteList :routes="routesForDate" :formatDateFunc="getFormattedMomentUserTZCombined" format="booking" />
             </div>
           </div>
         </div>
@@ -249,7 +249,7 @@ const selectedDate = ref<Moment>(moment(new Date(searchParams.value.date)).tz(us
 const refreshAvailableCalendarDays = () => {
   ApiService.getAvailableRouteDays(searchParams, moment(searchParams.value.date).toISOString(), 14).then(result => {
     calendarDaysAvailable.value = result;
-    // console.log(calendarDaysAvailable.value)
+    // console.log("calendarDaysAvailable", calendarDaysAvailable.value);
   });
 };
 
@@ -286,8 +286,8 @@ const updateRoutes = () => {
   }
 }
 
-const searchRoutes = (mom: Moment | null, mode: string) => {
-  const date = momentToUniqueString(mom); // searchParams.value.date // selectedDate.value
+const searchRoutes = (mmnt: Moment | null, mode: string) => {
+  const date = momentToUniqueString(mmnt); // searchParams.value.date // selectedDate.value
   // console.log('Поиск маршрутов', mode, date);
   if (mode == 'calendar') {
     // routesCalendar.value[date] = [];
@@ -356,7 +356,8 @@ watch(() => searchParams.value.date, generateCalendar, { immediate: true });
 
 .title {
   user-select: none;
-  font-size: 50px;
+  font-size: 3rem;
+  margin-left: 3rem;
 }
 
 /*//.search-page {
@@ -366,6 +367,7 @@ watch(() => searchParams.value.date, generateCalendar, { immediate: true });
 //}*/
 
 .layout {
+  justify-content: center;
   text-align: center;
   display: flex;
   gap: 20px;

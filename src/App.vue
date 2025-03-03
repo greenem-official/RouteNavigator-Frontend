@@ -29,6 +29,7 @@ authStore.initializeStore();
 .content {
   flex: 1;
   padding: 2rem;
+  min-width: 80%;
 }
 
 .container a {

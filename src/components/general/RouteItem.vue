@@ -6,8 +6,12 @@
   >
     <div class="always-visible-part">
       <div class="left">
-        <div class="destination">{{ route.departureLocation.displayName }} → {{ route.arrivalLocation.displayName }}</div>
+        <div class="destination">{{ getRoute().departureLocation.displayName }} → {{ getRoute().arrivalLocation.displayName }}</div>
         <div class="times">
+          <div class="time">
+            <span class="timeText">Транспорт: </span>
+            <span class="timeTime">{{ getRoute().transportType.displayName }}</span>
+          </div>
           <div class="time">
             <span class="timeText">Время отправления: </span>
             <span class="timeTime">{{ formattedDepartureTime }}</span>
@@ -16,29 +20,38 @@
             <span class="timeText">Время прибытия: </span>
             <span class="timeTime">{{ formattedArrivalTime }}</span>
           </div>
-          <div class="time">
-            <span class="timeText">Тип: </span>
-            <span class="timeTime">{{ route.transportType.displayName }}</span>
-          </div>
         </div>
       </div>
       <div class="right">
-        <div class="price">{{ formattedPrice }} р.</div>
+        <div class="price">{{ formattedPrice }} ₽</div>
+        <div class="amount" v-if="format === 'editing'"> {{ formattedAmount }} </div>
       </div>
     </div>
     <div class="expandable-part" @click.stop>
       <div v-if="isActive" class="additional-info">
         <div class="additional-info-area">
           <div v-if="format === 'booking'">
-            <div class="buy-section">
-              <button class="buy-button" @click="handleBuyButtonClick">Купить</button>
-            </div>
+            <form @submit.prevent="handleBuyButtonClick">
+              <div class="buy-section">
+                <input
+                    type="number"
+                    placeholder="Число билетов"
+                    class="main-input removeAmount"
+                    min="0"
+                    required
+                    v-model="localTicketAmount"
+                />
+                <button class="buy-button" type="submit" >Купить</button>
+              </div>
+            </form>
           </div>
           <div v-if="format === 'editing'">
-            <div class="edit-section">
-              <input type="number" placeholder="Число билетов" class="main-input removeAmount" min="0">
-              <button class="main-button modify-button" @click="handleModifyButtonClick">Убрать</button>
-            </div>
+            <form @submit.prevent="handleModifyButtonClick">
+              <div class="edit-section">
+                <input type="number" placeholder="Число билетов" class="main-input removeAmount" min="0" required>
+                <button class="main-button modify-button" type="submit" >Убрать</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -47,20 +60,30 @@
 </template>
 
 <script setup lang="ts">
-import {computed} from 'vue';
+import {computed, onMounted, ref} from 'vue';
 import type { Route } from '../../interfaces/Route.ts'
 import type { Moment } from "moment-timezone";
 import {useAuthStore} from "../../stores/AuthStore.ts";
 import {useRouter} from "vue-router";
 import {useModalStore} from "../../stores/ModalStore.ts";
 import {ApiService} from "../../api/ApiService.ts";
+import type {Booking} from "../../interfaces/Booking.ts";
 
 interface RouteItemProps {
-  route: Route;
+  route: Route | null;
+  booking: Booking | null;
   formatDateFunc: (date: Moment) => string;
   format: string;
   isActive: boolean;
   onClickFunc: () => void;
+}
+
+const localTicketAmount = ref(1);
+
+function getRoute() {
+  if(props.route != null) return props.route as Route;
+  console.log(props.booking?.route)
+  return props.booking?.route as Route;
 }
 
 const props = defineProps<RouteItemProps>();
@@ -69,15 +92,38 @@ const router = useRouter();
 const authStore = useAuthStore();
 const modalStore = useModalStore();
 
+onMounted(async () => {
+  if(props.booking != null) {
+    localTicketAmount.value = props.booking.ticketAmount;
+  }
+});
+
 const formattedDepartureTime = computed(() =>
-    props.formatDateFunc(props.route.departureTime)
+    props.formatDateFunc(getRoute().departureTime)
 );
 const formattedArrivalTime = computed(() =>
-    props.formatDateFunc(props.route.arrivalTime)
+    props.formatDateFunc(getRoute().arrivalTime)
 );
 
 const formattedPrice = computed(() => {
-  return props.route.price.toLocaleString('ru-RU');
+  return getRoute().price.toLocaleString('ru-RU');
+});
+
+const formattedAmount = computed(() => {
+  let amount = localTicketAmount.value;
+
+  if(amount == undefined) return "";
+
+  let s = amount + " ";
+  s += "билет";
+  if(amount % 10 == 1) {
+    s += "";
+  } else if(amount % 10 < 5) {
+    s += "а";
+  } else {
+    s += "ов"
+  }
+  return s;
 });
 
 const handleBuyButtonClick = () => {
@@ -93,7 +139,7 @@ const handleModifyButtonClick = () => {
 };
 
 const performPayment = () => {
-  ApiService.bookRoute(props.route.id, 1).then((res) => {
+  ApiService.bookRoute(getRoute().id, localTicketAmount.value).then((res) => {
     if ("message" in res) {
       if (res["message"] === "route_booking_success") {
         modalStore.openModal();
@@ -185,6 +231,7 @@ const performPayment = () => {
   display: flex;
   flex-direction: row;
   justify-content: end;
+  gap: 10px;
 }
 
 .buy-button {
