@@ -21,7 +21,8 @@
 
         <div v-if="activeTab === 'simple'" class="simple-mode">
           <div class="scrollable-container">
-            <RouteList :routes="routesSimpleMode" :formatDateFunc="getFormattedMomentUserTZCombined" format="booking" @update-list="updateRoutes" />
+            <RouteList :routes="routesSimpleMode" :formatDateFunc="getFormattedMomentUserTZCombined" format="booking"
+                       @update-list="updateRoutes"/>
           </div>
         </div>
 
@@ -39,7 +40,8 @@
 
           <div class="routes-for-date">
             <div class="scrollable-container">
-              <RouteList :routes="routesForDate" :formatDateFunc="getFormattedMomentUserTZCombined" format="booking" @update-list="updateRoutes"/>
+              <RouteList :routes="routesForDate" :formatDateFunc="getFormattedMomentUserTZCombined" format="booking"
+                         @update-list="updateRoutes"/>
             </div>
           </div>
         </div>
@@ -47,45 +49,62 @@
 
       <div class="filters">
         <form class="filters-form"> <!--@submit.prevent="searchRoutes"-->
-          <div class="from-to-group">
-            <div>
-              <label for="from">Откуда:</label>
-              <input id="from" class="main-input" v-model="searchParams.from" type="text" list="fromLocationOptions" />
-              <datalist id="fromLocationOptions">
-                <option v-for="option in firstLocationOptions" :key="option.code" :value="option.displayName">
-                  {{ option.displayName }}
-                </option>
-              </datalist>
-            </div>
-            <div class="swap-btn-div">
-              <button class="swap-button" @click.prevent="swapLocations">
-                <SwapIcon />
-              </button>
-            </div>
-            <div>
-              <label for="to">Куда:</label>
-              <input id="to" class="main-input" v-model="searchParams.to" type="text" list="toLocationOptions" />
-              <datalist id="toLocationOptions">
-                <option v-for="option in secondLocationOptions" :key="option.code" :value="option.displayName">
-                  {{ option.displayName }}
-                </option>
-              </datalist>
-            </div>
-          </div>
           <div class="otherFilters">
-            <div class="filterDateAndTime">
+            <div class="filters-section-title">Города</div>
+            <div class="from-to-group filters-section">
+              <div>
+                <label for="from">Откуда:</label>
+                <input id="from"
+                       class="main-input"
+                       v-model="searchParams.from"
+                       type="text"
+                       list="fromLocationOptions"
+                       placeholder="Любой"
+                />
+                <datalist id="fromLocationOptions">
+                  <option v-for="option in firstLocationOptions" :key="option.code" :value="option.displayName">
+                    {{ option.displayName }}
+                  </option>
+                </datalist>
+              </div>
+              <div class="swap-btn-div">
+                <button class="swap-button" @click.prevent="swapLocations">
+                  <SwapIcon/>
+                </button>
+              </div>
+              <div>
+                <label for="to">Куда:</label>
+                <input id="to"
+                       class="main-input"
+                       v-model="searchParams.to"
+                       type="text"
+                       list="toLocationOptions"
+                       placeholder="Любой"
+                />
+                <datalist id="toLocationOptions">
+                  <option v-for="option in secondLocationOptions" :key="option.code" :value="option.displayName">
+                    {{ option.displayName }}
+                  </option>
+                </datalist>
+              </div>
+            </div>
+
+            <div class="filters-section-title">Время отправления</div>
+            <div class="filterDateAndTime filters-section">
               <div>
                 <label for="date">Дата:</label>
-                <input id="date" class="main-input filterDateTime" v-model="searchParams.date" type="date" required />
+                <input id="date" class="main-input filterDateTime" v-model="searchParams.date" type="date" required/>
               </div>
               <div>
                 <label for="time">Время:</label>
-                <input id="time" class="main-input filterDateTime" v-model="searchParams.time" type="time" required />
+                <input id="time" class="main-input filterDateTime" v-model="searchParams.time" type="time" required/>
               </div>
             </div>
-            <div class="transportType">
+
+            <div class="filters-section-title">Транспорт</div>
+            <div class="transportType filters-section">
               <div>
-                <label>Транспорт:</label>
+                <label>Разрешённые типы:</label>
                 <div class="transport-buttons">
                   <button
                       v-for="(isActive, type) in searchParams.transportType"
@@ -102,7 +121,7 @@
             </div>
           </div>
           <div class="updateRoutes">
-            <button type="button" class="main-button updateRoutesBtn" @click="updateRoutes" >Обновить маршруты</button>
+            <button type="button" class="main-button updateRoutesBtn" @click="updateRoutes">Обновить маршруты</button>
           </div>
         </form>
       </div>
@@ -110,7 +129,9 @@
     <Modal :isOpen="modalStore.isOpen" @close="modalStore.closeModal">
       <div>
         <p>Покупка успешна</p>
-        <p>Вы можете просмотреть список своих заказов в <router-link to="/orders">Изменении заказов</router-link></p>
+        <p>Вы можете просмотреть список своих заказов в
+          <router-link to="/orders">Изменении заказов</router-link>
+        </p>
       </div>
     </Modal>
   </div>
@@ -120,7 +141,7 @@
 import {ref, computed, watch, onMounted} from 'vue';
 import moment, {type Moment} from 'moment-timezone';
 import SwapIcon from "../../assets/SwapIcon.vue";
-import type { Route } from "../../interfaces/Route.ts";
+import type {Route} from "../../interfaces/Route.ts";
 import RouteList from "../general/RouteList.vue";
 import {Location} from "../../interfaces/Location.ts";
 import {ApiService} from "../../api/ApiService.ts";
@@ -291,12 +312,15 @@ const searchRoutes = (mmnt: Moment | null, mode: string) => {
   // console.log('Поиск маршрутов', mode, date);
   if (mode == 'calendar') {
     // routesCalendar.value[date] = [];
-    ApiService.getRoutes(searchParams, selectedDate.value.toISOString(), true).then(res => { routesCalendar.value[date] = res })
-  }
-  else {
+    ApiService.getRoutes(searchParams, selectedDate.value.toISOString(), true).then(res => {
+      routesCalendar.value[date] = res
+    })
+  } else {
     // routesSimpleMode.value = [];
     const departureTimeMin = moment(searchParams.value.date).add(searchParams.value.time.split(':')[0], "hour").add(searchParams.value.time.split(':')[1], "minute").toISOString()
-    ApiService.getRoutes(searchParams, departureTimeMin, false).then(res => { routesSimpleMode.value = res })
+    ApiService.getRoutes(searchParams, departureTimeMin, false).then(res => {
+      routesSimpleMode.value = res
+    })
   }
   refreshAvailableCalendarDays();
 };
@@ -326,7 +350,7 @@ const generateCalendar = () => {
     const monday = new Date(startDate);
     monday.setDate(startDate.getDate() - diffToMonday);
 
-    calendarDays.value = Array.from({ length: 14 }, (_, i) => {
+    calendarDays.value = Array.from({length: 14}, (_, i) => {
       let tempDate = new Date(monday)
       tempDate.setDate(tempDate.getDate() + i);
 
@@ -345,7 +369,7 @@ const generateCalendar = () => {
   }
 };
 
-watch(() => searchParams.value.date, generateCalendar, { immediate: true });
+watch(() => searchParams.value.date, generateCalendar, {immediate: true});
 </script>
 
 <style scoped>
@@ -513,6 +537,17 @@ input, select {
   height: 80%; /* Иконка занимает всю высоту кнопки */
 }
 
+.filters-section-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: start;
+  margin-bottom: 5px;
+}
+
+.filters-section {
+  margin-bottom: 10px;
+}
+
 .from-to-group {
   justify-content: space-between;
   align-items: center;
@@ -572,6 +607,7 @@ input, select {
   border-color: var(--active-flat-button);
   background-color: var(--slight-active-tint);
 }
+
 .transport-button.active:hover {
   border-color: var(--slight-active-tint);
   background-color: var(--active-flat-button);

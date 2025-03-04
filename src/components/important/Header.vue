@@ -18,8 +18,11 @@
           <button class="login-button" @click="navigateToLogin">Войти</button>
         </div>
         <div v-else class="authenticated-container">
-          <div class="authenticated-username hover-underline" @click="navigateToAccount">
-            {{ authStore.authData?.userUsername || "Аккаунт" }}
+          <div class="authenticated-username-group" @click="navigateToAccount">
+            <UserIcon class="user-icon"/>
+            <div class="authenticated-username hover-underline">
+              {{ authStore.authData?.userUsername || "Аккаунт" }}
+            </div>
           </div>
         </div>
       </div>
@@ -31,8 +34,10 @@
 import { useAuthStore } from '../../stores/AuthStore';
 import { useRouter } from "vue-router";
 import { defineComponent } from "vue";
+import UserIcon from "../../assets/UserIcon.vue";
 
 export default defineComponent({
+  components: {UserIcon},
   setup() {
     const authStore = useAuthStore();
     const router = useRouter();
@@ -142,6 +147,14 @@ export default defineComponent({
   margin-right: 0.8rem;
 }
 
+.authenticated-username-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .authenticated-username {
   font-size: 1.5rem;
   line-height: 0.8rem;
@@ -157,5 +170,12 @@ export default defineComponent({
 
 .hover-underline:hover {
   text-decoration: underline;
+}
+
+.user-icon {
+  width: 24px;
+  height: 24px;
+  /*stroke: var(--main-active-color);*/
+  /*fill: var(--main-active-color);*/
 }
 </style>

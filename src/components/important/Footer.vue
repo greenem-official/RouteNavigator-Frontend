@@ -5,7 +5,7 @@
 <template>
   <footer class="header">
     <div class="header-content">
-      <p>&copy; 2025 Ivan. Все права защищены.</p>
+      <p>&copy; 2025 RouteNavigation. Все права защищены.</p>
     </div>
   </footer>
 </template>
