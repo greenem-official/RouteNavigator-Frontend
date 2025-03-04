@@ -12,9 +12,20 @@
 import Header from './components/important/Header.vue';
 import Footer from "./components/important/Footer.vue";
 import {useAuthStore} from "./stores/AuthStore.ts";
+import {onMounted} from "vue";
 
 const authStore = useAuthStore();
 authStore.initializeStore();
+
+onMounted(async () => {
+  try {
+    authStore.checkToken().then(value => {
+      if (value) console.log(value.error);
+    })
+  } catch (error) {
+    console.error('Ошибка при обновлении данных авторизации:', error);
+  }
+});
 </script>
 
 <style scoped>

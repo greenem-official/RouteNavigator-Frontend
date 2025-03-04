@@ -8,7 +8,8 @@ import type {Booking} from "../interfaces/Booking.ts";
 // import { plainToInstance } from "class-transformer";
 
 export class ApiService {
-    private static readonly API_URL = 'http://127.0.0.1:8080/api/main';
+    private static readonly BACKEND_URL = "http://192.168.1.95:8080"; // 127.0.0.1
+    private static readonly API_URL = `${ApiService.BACKEND_URL}/api/main`;
 
     private static getAuthStore() {
         return useAuthStore();
@@ -68,6 +69,25 @@ export class ApiService {
             return data;
         } catch (error) {
             console.error('Error during register:', error);
+            throw error;
+        }
+    }
+
+    public static async checkToken(token: string): Promise<AuthData | ErrorMessage> {
+        try {
+            const response = await axios({
+                method: 'post',
+                url: `${this.API_URL}/checkToken`,
+                headers: {},
+                data: {
+                    token: token,
+                }
+            });
+
+            const data = response.data;
+            return data;
+        } catch (error) {
+            console.error('Error during login:', error);
             throw error;
         }
     }
@@ -179,11 +199,7 @@ export class ApiService {
                 }
             });
 
-            const data = response.data;
-            // for (const route of data) {}
-
-            return data;
-            // return plainToInstance(Location, data);
+            return response.status;
         } catch (error) {
             console.error('Error on modifying a route:', error);
             throw error;

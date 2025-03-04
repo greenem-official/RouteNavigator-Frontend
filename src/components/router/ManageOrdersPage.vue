@@ -45,7 +45,7 @@ onMounted(async () => {
     Изменение заказов
   </div>
   <div class="scrollable-container orders-list">
-    <RouteList :bookings="activeBookings" :formatDateFunc="formatTime" format="editing" />
+    <RouteList :bookings="activeBookings" :formatDateFunc="formatTime" format="editing" @update-list="refreshOrderedRoutes" />
   </div>
 </div>
 </template>
@@ -64,6 +64,7 @@ onMounted(async () => {
   font-size: 3rem;
   font-weight: bold;
   text-align: start;
+  user-select: none;
 }
 
 .orders-list {

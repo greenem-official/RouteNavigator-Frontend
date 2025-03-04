@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import {useModalStore} from "../../stores/ModalStore.ts";
+
+const modalStore = useModalStore();
+
 const props = defineProps<{
   isOpen: boolean; // eslint-disable-line vue/no-unused-properties
 }>();
@@ -7,6 +11,7 @@ const emit = defineEmits(['close']);
 
 const closeModal = () => {
   emit('close');
+  modalStore.closeModal();
 };
 </script>
 

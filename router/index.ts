@@ -6,6 +6,7 @@ import LoginPage from "../src/components/router/LoginPage.vue";
 import {useAuthStore} from "../src/stores/AuthStore.ts";
 import ManageOrdersPage from "../src/components/router/ManageOrdersPage.vue";
 import AccountPage from "../src/components/router/AccountPage.vue";
+import {useModalStore} from "../src/stores/ModalStore.ts";
 
 const routes = [
     { path: '/', component: MainPage, name: "Main" },
@@ -22,11 +23,14 @@ const router = createRouter({
 
 router.beforeEach((to, _, next) => {
     const authStore = useAuthStore();
+    const modalStore = useModalStore();
+
     if (to.meta.requiresAuth && !authStore.isUserAuthenticated) {
         next({ name: 'Login' });
     } else {
         next();
     }
+    modalStore.closeModal();
 });
 
 export default router;

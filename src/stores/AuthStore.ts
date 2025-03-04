@@ -54,6 +54,21 @@ export const useAuthStore = defineStore('auth', {
                 return {'error': reason } as ErrorMessage;
             });
         },
+        checkToken(): Promise<ErrorMessage | null> {
+            if(!this.isAuthenticated) return Promise.resolve(null);
+
+            return ApiService.checkToken(this.authData?.token as string).then(data => {
+                if ("error" in data) {
+                    this.logout();
+                    return data as ErrorMessage;
+                }
+
+                this.authData = data;
+                return null;
+            }).catch(reason => {
+                return {'error': reason } as ErrorMessage;
+            });
+        },
         logout() {
             this.isAuthenticated = false;
             this.authData = null;

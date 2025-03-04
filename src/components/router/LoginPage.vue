@@ -3,6 +3,7 @@ import {computed, ref} from "vue";
 import {useAuthStore} from "../../stores/AuthStore.ts";
 import {translateMessage} from "../../localization/MessageTranslator.ts";
 import router from "../../../router";
+import LabeledInput from "../general/LabeledInput.vue";
 
 const authStore = useAuthStore();
 
@@ -16,6 +17,13 @@ const authParams = ref({
   passwordCheck: "",
 });
 
+const authInputs = ref({
+  email: ref<typeof LabeledInput>(),
+  username: ref<typeof LabeledInput>(),
+  password: ref<typeof LabeledInput>(),
+  passwordCheck: ref<typeof LabeledInput>(),
+});
+
 // Animations
 
 const containerWidth = computed(() => {
@@ -26,7 +34,10 @@ const containerWidth = computed(() => {
 // Functionality
 
 const submitForm = () => {
-  console.log("submit form");
+  const registration = activeTab.value === 'register';
+
+  if(registration && authParams.value.password !== authParams.value.passwordCheck) return;
+
   if (activeTab.value === 'login') {
     authStore.login({ email: authParams.value.email, password: authParams.value.password }).then((res) => {
       errorMessage.value = '';
@@ -77,49 +88,45 @@ const indicatorStyle = computed(() => {
     </div>
     <form @submit.prevent="submitForm" class="actual-form">
       <div class="auth-form" :style="{ width: containerWidth + 'px' }">
-        <div class="input-section">
-          <label class="info-label">Email</label>
-          <input
-              class="info-input"
-              v-model="authParams.email"
-              type="email"
-              autocomplete="username"
-              :required="activeTab === 'login' || activeTab === 'register'"
-          />
-        </div>
+        <LabeledInput ref="{{ authInputs.email }}"
+            label="Email"
+            type="email"
+            v-model="authParams.email"
+            :autocomplete="'email'"
+            :required="activeTab === 'login' || activeTab === 'register'"
+        />
 
-        <div class="input-section" v-if="activeTab === 'register'">
-          <label class="info-label">Имя пользователя</label>
-          <input
-              class="info-input"
-              v-model="authParams.username"
-              type="text"
-              autocomplete="username"
-              required
-          />
-        </div>
+        <LabeledInput ref="{{ authInputs.username }}" v-if="activeTab === 'register'"
+            label="Имя пользователя"
+            type="text"
+            v-model="authParams.username"
+            :min_length="5"
+            :max_length="25"
+            :autocomplete="'username'"
+            :required="activeTab === 'register'"
+        />
 
-        <div class="input-section">
-          <label class="info-label">Пароль</label>
-          <input
-              class="info-input"
-              v-model="authParams.password"
-              type="password"
-              :autocomplete="activeTab === 'login' ? 'current-password' : 'new-password'"
-              :required="activeTab === 'login' || activeTab === 'register'"
-          />
-        </div>
+        <LabeledInput ref="{{ authInputs.password }}"
+            label="Пароль"
+            type="password"
+            v-model="authParams.password"
+            :min_length="5"
+            :max_length="25"
+            :autocomplete="activeTab === 'login' ? 'current-password' : 'new-password'"
+            :required="activeTab === 'login' || activeTab === 'register'"
+        />
 
-        <div class="input-section" v-if="activeTab === 'register'">
-          <label class="info-label">Повтор пароля</label>
-          <input
-              class="info-input"
-              v-model="authParams.passwordCheck"
-              type="password"
-              autocomplete="new-password"
-              required
-          />
-        </div>
+        <LabeledInput ref="{{ authInputs.passwordCheck }}" v-if="activeTab === 'register'"
+            label="Повтор пароля"
+            type="password"
+            v-model="authParams.passwordCheck"
+            :min_length="5"
+            :max_length="25"
+            :autocomplete="'password'"
+            :required="activeTab === 'register'"
+            :invalid-by-outer-factors-message="(authParams.password === authParams.passwordCheck) ? undefined : 'Пароли не совпадают'"
+        />
+
         <div class="error-section">
           <label class="error-label"> {{ translateMessage(errorMessage) }} </label>
         </div>
@@ -135,6 +142,9 @@ const indicatorStyle = computed(() => {
 <style scoped>
 .vertical-main {
   font-size: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .title {
@@ -202,42 +212,12 @@ const indicatorStyle = computed(() => {
   border: solid 2px #e8e8e8;
 }
 
-.input-section {
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  margin: 0.5rem 0;
-  gap: 0.2rem
-}
-
-.info-label {
-  color: var(--dark-color)
-}
-
-.info-input {
-  display: flex;
-  width: 100%;
-  padding: 7px;
-  border: 1px solid var(--main-medium-active-color);
-  border-radius: 5px;
-  font-size: 1rem;
-  color: var(--dark-color);
-  background-color: var(--main-very-slightly-active-color);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.info-input:focus {
-  border-color: var(--active-text); /* Цвет границы при фокусе */
-  background-color: var(--main-brihter-calm-color);;
-  outline: none; /* Убираем стандартный outline */
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Тень при фокусе */
-}
-
 .error-section {
   display: flex;
   margin: 2px;
   justify-content: start;
   text-align: start;
+  font-size: 1.15rem;
 }
 
 .error-label {

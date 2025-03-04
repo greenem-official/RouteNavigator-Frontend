@@ -14,7 +14,7 @@ export default defineComponent({
     <div class="listingOptions">
       <span class="colored">Перелёты</span>,
       <span class="colored">Поезда</span>,
-      <span class="colored">Автобусы</span> и многое другое
+      <span class="colored">Автобусы</span> и многое другое!
     </div>
     <div class="lastPhrase"></div>
     <router-link to="/search" class="search-button">Поиск Билетов</router-link>
@@ -68,6 +68,7 @@ export default defineComponent({
 }
 
 .colored {
-  color: var(--main-active-color);
+  /*color: var(--main-active-color);*/
+  font-weight: bold;
 }
 </style>

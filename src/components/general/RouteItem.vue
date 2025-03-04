@@ -48,7 +48,14 @@
           <div v-if="format === 'editing'">
             <form @submit.prevent="handleModifyButtonClick">
               <div class="edit-section">
-                <input type="number" placeholder="Число билетов" class="main-input removeAmount" min="0" required>
+                <input
+                    type="number"
+                    placeholder="Число билетов"
+                    class="main-input removeAmount"
+                    min="0"
+                    required
+                    v-model="localRefundTicketAmount"
+                />
                 <button class="main-button modify-button" type="submit" >Убрать</button>
               </div>
             </form>
@@ -79,6 +86,7 @@ interface RouteItemProps {
 }
 
 const localTicketAmount = ref(1);
+const localRefundTicketAmount = ref(1);
 
 function getRoute() {
   if(props.route != null) return props.route as Route;
@@ -93,10 +101,20 @@ const authStore = useAuthStore();
 const modalStore = useModalStore();
 
 onMounted(async () => {
+  resetLocalAmount();
+});
+
+function resetLocalAmount() {
   if(props.booking != null) {
     localTicketAmount.value = props.booking.ticketAmount;
   }
-});
+}
+
+const emit = defineEmits(['updateList']);
+
+const updateList = () => {
+  emit('updateList');
+};
 
 const formattedDepartureTime = computed(() =>
     props.formatDateFunc(getRoute().departureTime)
@@ -110,7 +128,7 @@ const formattedPrice = computed(() => {
 });
 
 const formattedAmount = computed(() => {
-  let amount = localTicketAmount.value;
+  let amount = props.booking?.ticketAmount;
 
   if(amount == undefined) return "";
 
@@ -135,7 +153,17 @@ const handleBuyButtonClick = () => {
 };
 
 const handleModifyButtonClick = () => {
-
+  if((props.booking?.ticketAmount as number) < localRefundTicketAmount.value) {
+    localRefundTicketAmount.value = props.booking?.ticketAmount as number;
+  }
+  ApiService.modifyBooking(props.booking?.id as number, props.booking?.ticketAmount as number - localRefundTicketAmount.value).then((status) => {
+    if(status == 200) {
+      updateList();
+      resetLocalAmount();
+    } else {
+      console.error("Got status " + status + " on modifyBooking");
+    }
+  })
 };
 
 const performPayment = () => {

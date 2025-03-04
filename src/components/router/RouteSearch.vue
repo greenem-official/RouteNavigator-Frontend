@@ -21,7 +21,7 @@
 
         <div v-if="activeTab === 'simple'" class="simple-mode">
           <div class="scrollable-container">
-            <RouteList :routes="routesSimpleMode" :formatDateFunc="getFormattedMomentUserTZCombined" format="booking" />
+            <RouteList :routes="routesSimpleMode" :formatDateFunc="getFormattedMomentUserTZCombined" format="booking" @update-list="updateRoutes" />
           </div>
         </div>
 
@@ -39,7 +39,7 @@
 
           <div class="routes-for-date">
             <div class="scrollable-container">
-              <RouteList :routes="routesForDate" :formatDateFunc="getFormattedMomentUserTZCombined" format="booking" />
+              <RouteList :routes="routesForDate" :formatDateFunc="getFormattedMomentUserTZCombined" format="booking" @update-list="updateRoutes"/>
             </div>
           </div>
         </div>
