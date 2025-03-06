@@ -3,7 +3,7 @@ import {useModalStore} from "../../stores/ModalStore.ts";
 
 const modalStore = useModalStore();
 
-const props = defineProps<{
+defineProps<{
   isOpen: boolean; // eslint-disable-line vue/no-unused-properties
 }>();
 

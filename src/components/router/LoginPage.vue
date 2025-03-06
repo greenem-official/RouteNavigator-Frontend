@@ -17,6 +17,7 @@ const authParams = ref({
   passwordCheck: "",
 });
 
+// @ts-ignore
 const authInputs = ref({
   email: ref<typeof LabeledInput>(),
   username: ref<typeof LabeledInput>(),
