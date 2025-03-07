@@ -8,7 +8,9 @@ import type {Booking} from "../interfaces/Booking.ts";
 // import { plainToInstance } from "class-transformer";
 
 export class ApiService {
-    private static readonly BACKEND_URL = "http://192.168.1.95:8080"; // 127.0.0.1
+    private static readonly BACKEND_URL = "/api";
+    // private static readonly BACKEND_URL = "http://127.0.0.1:8080";
+
     private static readonly API_URL = `${ApiService.BACKEND_URL}/api/main`;
 
     private static getAuthStore() {
