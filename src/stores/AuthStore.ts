@@ -28,7 +28,7 @@ export const useAuthStore = defineStore('auth', {
                     this.authData = data as AuthData;
                     this.isAuthenticated = true;
 
-                    console.log(this.authData);
+                    // console.log(this.authData);
 
                     this.saveStore();
                     return null;
@@ -46,7 +46,7 @@ export const useAuthStore = defineStore('auth', {
                 this.authData = data;
                 this.isAuthenticated = true;
 
-                console.log(this.authData);
+                // console.log(this.authData);
 
                 this.saveStore();
                 return null;

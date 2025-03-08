@@ -17,7 +17,7 @@ function formatTime(date: string | Moment): string {
 const refreshOrderedRoutes = () => {
   ApiService.getBookings().then(res => {
     activeBookings.value = res;
-    console.log(res);
+    // console.log(res);
   });
 }
 

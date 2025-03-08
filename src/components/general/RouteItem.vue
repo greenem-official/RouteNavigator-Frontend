@@ -90,7 +90,7 @@ const localRefundTicketAmount = ref(1);
 
 function getRoute() {
   if(props.route != null) return props.route as Route;
-  console.log(props.booking?.route)
+  // console.log(props.booking?.route)
   return props.booking?.route as Route;
 }
 

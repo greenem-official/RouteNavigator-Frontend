@@ -5,13 +5,11 @@ import type {Route} from "../interfaces/Route.ts";
 import type {AuthData, ErrorMessage} from "../interfaces/AuthTypes.ts";
 import {useAuthStore} from "../stores/AuthStore.ts";
 import type {Booking} from "../interfaces/Booking.ts";
+import {Config} from "./Config.ts";
 // import { plainToInstance } from "class-transformer";
 
 export class ApiService {
-    private static readonly BACKEND_URL = "/api";
-    // private static readonly BACKEND_URL = "http://127.0.0.1:8080";
-
-    private static readonly API_URL = `${ApiService.BACKEND_URL}/api/main`;
+    private static readonly API_URL = `${Config.BACKEND_URL}/api/main`;
 
     private static getAuthStore() {
         return useAuthStore();
@@ -147,7 +145,7 @@ export class ApiService {
             const data = response.data;
 
             const newFormat: Moment[] = []
-            console.log(data)
+            // console.log(data)
             data.forEach((item: string) => {
                 // console.log(item)
                 newFormat.push(moment(Date.parse(item))); //.format('DD-MM'))

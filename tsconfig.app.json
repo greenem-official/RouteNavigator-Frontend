@@ -5,14 +5,16 @@
 
     /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": true, /* Maybe will be changed to false later */
+    "noUnusedParameters": true, /* Maybe will be changed to false later */
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
 
     "target": "ES5",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+
+    "types": ["node"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
 }
