@@ -18,12 +18,12 @@ const authParams = ref({
 });
 
 // @ts-ignore
-const authInputs = ref({
-  email: ref<typeof LabeledInput>(),
-  username: ref<typeof LabeledInput>(),
-  password: ref<typeof LabeledInput>(),
-  passwordCheck: ref<typeof LabeledInput>(),
-});
+const authInputs = {
+  email: ref<InstanceType<typeof LabeledInput> | null>(null),
+  username: ref<InstanceType<typeof LabeledInput> | null>(null),
+  password: ref<InstanceType<typeof LabeledInput> | null>(null),
+  passwordCheck: ref<InstanceType<typeof LabeledInput> | null>(null),
+};
 
 // Animations
 
@@ -34,7 +34,35 @@ const containerWidth = computed(() => {
 
 // Functionality
 
+function areAllFieldsValid(): boolean {
+  if (
+      activeTab.value === "register" &&
+      !(authInputs.username?.value as InstanceType<typeof LabeledInput> | null)?.isValid
+  ) {
+    return false;
+  }
+
+  if (!(authInputs.email?.value as InstanceType<typeof LabeledInput> | null)?.isValid) {
+    return false;
+  }
+
+  if (!(authInputs.password?.value as InstanceType<typeof LabeledInput> | null)?.isValid) {
+    return false;
+  }
+
+  if (
+      activeTab.value === "register" &&
+      !(authInputs.passwordCheck?.value as InstanceType<typeof LabeledInput> | null)?.isValid
+  ) {
+    return false;
+  }
+
+  return true;
+}
+
 const submitForm = () => {
+  if(!areAllFieldsValid()) return;
+
   const registration = activeTab.value === 'register';
 
   if(registration && authParams.value.password !== authParams.value.passwordCheck) return;
@@ -89,7 +117,7 @@ const indicatorStyle = computed(() => {
     </div>
     <form @submit.prevent="submitForm" class="actual-form">
       <div class="auth-form" :style="{ width: containerWidth + 'px' }">
-        <LabeledInput ref="{{ authInputs.email }}"
+        <LabeledInput :ref="authInputs.email"
             label="Email"
             type="email"
             v-model="authParams.email"
@@ -97,7 +125,7 @@ const indicatorStyle = computed(() => {
             :required="activeTab === 'login' || activeTab === 'register'"
         />
 
-        <LabeledInput ref="{{ authInputs.username }}" v-if="activeTab === 'register'"
+        <LabeledInput :ref="authInputs.username" v-if="activeTab === 'register'"
             label="Имя пользователя"
             type="text"
             v-model="authParams.username"
@@ -107,7 +135,7 @@ const indicatorStyle = computed(() => {
             :required="activeTab === 'register'"
         />
 
-        <LabeledInput ref="{{ authInputs.password }}"
+        <LabeledInput :ref="authInputs.password"
             label="Пароль"
             type="password"
             v-model="authParams.password"
@@ -117,7 +145,7 @@ const indicatorStyle = computed(() => {
             :required="activeTab === 'login' || activeTab === 'register'"
         />
 
-        <LabeledInput ref="{{ authInputs.passwordCheck }}" v-if="activeTab === 'register'"
+        <LabeledInput :ref="authInputs.passwordCheck" v-if="activeTab === 'register'"
             label="Повтор пароля"
             type="password"
             v-model="authParams.passwordCheck"

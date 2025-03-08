@@ -54,6 +54,10 @@ const validateInput = (value: string) => {
   emit('validate', isValid.value);
 };
 
+defineExpose({
+  isValid: isValid,
+});
+
 watch(() => props.modelValue, validateInput);
 </script>
 

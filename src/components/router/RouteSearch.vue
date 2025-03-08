@@ -55,7 +55,7 @@
               <div>
                 <label for="from">Откуда:</label>
                 <input id="from"
-                       class="main-input"
+                       class="main-input placeholder-input"
                        v-model="searchParams.from"
                        type="text"
                        list="fromLocationOptions"
@@ -75,7 +75,7 @@
               <div>
                 <label for="to">Куда:</label>
                 <input id="to"
-                       class="main-input"
+                       class="main-input placeholder-input"
                        v-model="searchParams.to"
                        type="text"
                        list="toLocationOptions"
@@ -169,13 +169,6 @@ const indicatorStyle = computed(() => {
 
 const mainTimeZone = 'Europe/Moscow';
 const userTimeZone = ref<string>(mainTimeZone);
-
-// const showModal = ref(false);
-
-// provide('showModal', showModal);
-// provide('closeModal', () => {
-//   isOpen.value = false;
-// });
 
 function getFormattedMomentDateSimple(moment: Moment) {
   return moment.format('YYYY-MM-DD');
@@ -294,6 +287,8 @@ function momentToUniqueString(date: Moment | null) {
 
 const routesForDate = computed(() => {
   const result = routesCalendar.value[momentToUniqueString(selectedDate.value)];
+  // console.log("selectedDate", selectedDate.value.format())
+  // console.log("routesCalendar[date]", result);
   if (!result) return []
   // console.log("routesForDate", momentToUniqueString(selectedDate.value), result);
   return result;
@@ -310,10 +305,14 @@ const updateRoutes = () => {
 const searchRoutes = (mmnt: Moment | null, mode: string) => {
   const date = momentToUniqueString(mmnt); // searchParams.value.date // selectedDate.value
   // console.log('Поиск маршрутов', mode, date);
+  // const selectedDateOrig = selectedDate.value;
   if (mode == 'calendar') {
     // routesCalendar.value[date] = [];
     ApiService.getRoutes(searchParams, selectedDate.value.toISOString(), true).then(res => {
       routesCalendar.value[date] = res
+      // const selectedDateOrig = selectedDate.value;
+      // selectedDate.value = moment("2000-01-01");
+      // selectedDate.value = selectedDateOrig;
     })
   } else {
     // routesSimpleMode.value = [];
@@ -332,12 +331,13 @@ const swapLocations = () => {
 const selectDate = (date: Moment) => {
   // console.log('Выбрана дата:', selectedDate.value);
   const newDate = date.clone().tz(userTimeZone.value);
-  searchRoutes(newDate, "calendar");
   selectedDate.value = newDate;
+  searchRoutes(newDate, "calendar");
+
+  // console.log("selectedDate", selectedDate.value.format());
 };
 
 const generateCalendar = () => {
-  // console.log('Generating calendar...');
   try {
     const startDate = new Date(searchParams.value.date);
     if (isNaN(startDate.getTime())) {
@@ -535,6 +535,11 @@ input, select {
 .swap-button svg {
   width: 80%; /* Иконка занимает всю ширину кнопки */
   height: 80%; /* Иконка занимает всю высоту кнопки */
+}
+
+.placeholder-input {
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .filters-section-title {

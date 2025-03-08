@@ -15,12 +15,16 @@ const logout = () => {
 <template>
   <div class="account-page">
     <div class="title">Личный кабинет</div>
+    <div class="account-item">
     <div class="info-label">Адрес эл. почты</div>
     <div class="info-box"> {{ authStore.authData?.userEmail }} </div>
+    </div>
+    <div class="account-item">
     <div class="info-label">Ямя пользователя</div>
     <div class="info-box"> {{ authStore.authData?.userUsername }} </div>
-    <button class="main-button change_password" disabled>Смена пароля</button>
-    <button class="main-button logout-button" @click="logout">Выход</button>
+    </div>
+<!--    <button class="main-button change_password" disabled>Смена пароля</button>-->
+    <button class="main-button" @click="logout">Выход</button>
   </div>
 </template>
 
@@ -31,11 +35,22 @@ const logout = () => {
   flex-direction: column;
   align-items: start;
   justify-content: center;
-  gap: 1rem;
+  gap: 1.5rem;
+  font-size: 1.2rem;
 }
 
 .title {
   font-size: 3rem;
+  font-weight: bold;
+  text-align: start;
+  user-select: none;
+  margin-bottom: 0.5rem;
+}
+
+.account-item {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
 }
 
 .change_password:disabled {

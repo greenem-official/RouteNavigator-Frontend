@@ -19,7 +19,7 @@ export const useAuthStore = defineStore('auth', {
             localStorage.setItem('authStore', JSON.stringify(this.$state));
         },
         login(credentials: { email: string; password: string }): Promise<ErrorMessage | null> {
-            console.log("login...");
+            // console.log("login...");
             return ApiService.login(credentials.email, credentials.password).then(data => {
                     if ("error" in data) {
                         return data as ErrorMessage;
@@ -37,7 +37,7 @@ export const useAuthStore = defineStore('auth', {
             });
         },
         register(credentials: { email: string; username: string, password: string }): Promise<ErrorMessage | null> {
-            console.log("register...");
+            // console.log("register...");
             return ApiService.register(credentials.email, credentials.username, credentials.password).then(data => {
                 if ("error" in data) {
                     return data as ErrorMessage;
