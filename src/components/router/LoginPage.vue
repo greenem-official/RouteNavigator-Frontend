@@ -121,6 +121,8 @@ const indicatorStyle = computed(() => {
             label="Email"
             type="email"
             v-model="authParams.email"
+            :min_length="5"
+            :max_length="50"
             :autocomplete="'email'"
             :required="activeTab === 'login' || activeTab === 'register'"
         />

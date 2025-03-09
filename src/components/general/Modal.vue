@@ -43,7 +43,7 @@ const closeModal = () => {
   padding: 20px;
   border-radius: 8px;
   position: relative;
-  max-width: 400px;
+  max-width: 450px;
   width: 100%;
   text-align: center;
 }

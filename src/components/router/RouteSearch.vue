@@ -121,15 +121,15 @@
             </div>
           </div>
           <div class="updateRoutes">
-            <button type="button" class="main-button updateRoutesBtn" @click="updateRoutes">Обновить маршруты</button>
+            <button type="button" class="main-button" @click="updateRoutes">Обновить маршруты</button>
           </div>
         </form>
       </div>
     </div>
-    <Modal :isOpen="modalStore.isOpen" @close="modalStore.closeModal">
+    <Modal :isOpen="modalStore.isOpen" @close="modalStore.closeModal" class="modal-payment-done" >
       <div>
-        <p>Покупка успешна</p>
-        <p>Вы можете просмотреть список своих заказов в
+        <p class="modal-payment-done-title">Покупка успешна</p>
+        <p class="modal-payment-done-description">Вы можете просмотреть список своих заказов в
           <router-link to="/orders">Изменении заказов</router-link>
         </p>
       </div>
@@ -408,7 +408,7 @@ watch(() => searchParams.value.date, generateCalendar, {immediate: true});
   user-select: none;
 }
 
-button {
+/*button {
   padding: 10px 15px;
   background-color: var(--active-flat-button);
   color: var(--bright-text-color);
@@ -418,7 +418,7 @@ button {
 
 button:hover {
   background-color: var(--slight-active-tint);
-}
+}*/
 
 .tab-button {
   flex: 1;
@@ -604,18 +604,18 @@ input, select {
 }
 
 .transport-button.active {
-  background-color: var(--active-flat-button);
+  background-color: var(--main-medium-active-color);
   color: var(--bright-text-color);
 }
 
 .transport-button:hover {
-  border-color: var(--active-flat-button);
+  border-color: var(--main-medium-active-color);
   background-color: var(--slight-active-tint);
 }
 
 .transport-button.active:hover {
   border-color: var(--slight-active-tint);
-  background-color: var(--active-flat-button);
+  background-color: var(--main-medium-active-color);
 }
 
 /*Update routes button*/
@@ -665,6 +665,20 @@ input, select {
   border: 2px solid var(--main-gray-3);
   border-radius: 5px;
   box-shadow: 8px 8px 20px 4px rgba(0, 0, 0, 0.07);
+}
+
+.modal-payment-done {
+  padding: 10px;
+  min-width: 600px;
+}
+
+.modal-payment-done-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.modal-payment-done-description {
+  font-size: 1.3rem;
 }
 
 </style>

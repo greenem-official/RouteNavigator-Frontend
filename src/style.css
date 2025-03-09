@@ -114,7 +114,7 @@ input, select {
 }
 
 .main-button:hover {
-  background-color: var(--main-slightly2-active-color);
+  background-color: var(--main-active-60);
 }
 
 #app {

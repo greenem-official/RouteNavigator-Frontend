@@ -136,7 +136,7 @@ const formattedAmount = computed(() => {
   s += "билет";
   if(amount % 10 == 1) {
     s += "";
-  } else if(amount % 10 < 5) {
+  } else if(amount % 10 > 0 && amount % 10 < 5) {
     s += "а";
   } else {
     s += "ов"
@@ -167,6 +167,8 @@ const handleModifyButtonClick = () => {
 };
 
 const performPayment = () => {
+  if(localTicketAmount.value < 1) return;
+
   ApiService.bookRoute(getRoute().id, localTicketAmount.value).then((res) => {
     if ("message" in res) {
       if (res["message"] === "route_booking_success") {

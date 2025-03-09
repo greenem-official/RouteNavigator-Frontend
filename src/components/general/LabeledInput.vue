@@ -46,7 +46,7 @@ const validateInput = (value: string) => {
     errorMessage.value = "Минимум " + props.min_length + " символов";
   } else if (props.max_length && value.length > props.max_length) {
     isValid.value = false;
-    errorMessage.value = "Максимальная " + props.min_length + " символов";
+    errorMessage.value = "Максимум " + props.max_length + " символов";
   } else if (props.invalidByOuterFactorsMessage != undefined) {
     isValid.value = false;
     errorMessage.value = props.invalidByOuterFactorsMessage;
