@@ -14,9 +14,11 @@ body, html {
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: only light; /*dark;*/
+  color: #213547;
+  background-color: #ffffff;
+  /*color: rgba(255, 255, 255, 0.87);*/
+  /*background-color: #242424;*/
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -125,6 +127,14 @@ input, select {
   /*margin: 0 !important;*/
   /*padding: 0.5rem;*/
   text-align: center;
+}
+
+/* From media */
+a:hover {
+  color: #747bff;
+}
+button {
+  background-color: var(--main-medium-active-color);
 }
 
 @media (prefers-color-scheme: light) {
