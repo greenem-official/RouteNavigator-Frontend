@@ -5,7 +5,7 @@
 В "production" режиме используется веб-сервер Nginx с собранными статическими файлами проекта.  
 
 ## Другие части проекта
-Фронтенд: https://github.com/greenem-official/RouteNavigator-Frontend  
+Бэкенд: https://github.com/greenem-official/RouteNavigator-Backend  
 Конфигурация для Docker: https://github.com/greenem-official/RouteNavigator-Compose  
 
 ## Структура приложения
