@@ -94,6 +94,10 @@ export class ApiService {
 
     public static async getRoutes(searchParams: any, departureTimeMin: any, thisDateOnly: boolean): Promise<Route[]> {
         try {
+            const transportAllowed = Object.entries(searchParams.value.transportType)
+                .filter(([_, value]) => value === true)
+                .map(([key]) => String(key).toString());
+
             const response = await axios({
                 method: 'post',
                 url: `${this.API_URL}/findRoutes`,
@@ -105,7 +109,7 @@ export class ApiService {
                     "arrivalLocation": searchParams.value.to,
                     "departureTimeMin": departureTimeMin,
                     "fetchDays": thisDateOnly ? 1 : -1,
-                    "transportAllowed": searchParams.value.transportType
+                    "transportAllowed": transportAllowed
                 }
             });
 
@@ -126,6 +130,10 @@ export class ApiService {
 
     public static async getAvailableRouteDays(searchParams: any, departureTimeMin: any, daysAmount: number): Promise<Moment[]> {
         try {
+            const transportAllowed = Object.entries(searchParams.value.transportType)
+                .filter(([_, value]) => value === true)
+                .map(([key]) => String(key).toString());
+
             const response = await axios({
                 method: 'post',
                 url: `${this.API_URL}/findRoutes`,
@@ -138,7 +146,7 @@ export class ApiService {
                     "departureTimeMin": departureTimeMin,
                     "fetchDays": daysAmount,
                     "fetchAvailability" : true,
-                    "transportAllowed": searchParams.value.transportType
+                    "transportAllowed": transportAllowed
                 }
             });
 
