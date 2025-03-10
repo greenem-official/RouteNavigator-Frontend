@@ -93,7 +93,7 @@
             <div class="filterDateAndTime filters-section">
               <div>
                 <label for="date">Дата:</label>
-                <input id="date" class="main-input filterDateTime" v-model="searchParams.date" type="date" required/>
+                <input id="date" class="main-input filterDateTime" v-model="searchParams.date" type="date" @change="onSearchDateChange" required/>
               </div>
               <div>
                 <label for="time">Время:</label>
@@ -260,8 +260,12 @@ const calendarDays = ref<{ date: Moment; hasRoutes: boolean }[]>([]);
 const selectedDate = ref<Moment>(moment(new Date(searchParams.value.date)).tz(userTimeZone.value));
 // console.log('selectedDate:', selectedDate.value); // extractDateFromMoment(selectedDate.value)
 
+function onSearchDateChange() {
+  refreshAvailableCalendarDays();
+}
+
 const refreshAvailableCalendarDays = () => {
-  ApiService.getAvailableRouteDays(searchParams, moment(searchParams.value.date).toISOString(), 14).then(result => {
+  ApiService.getAvailableRouteDays(searchParams, moment(getMondayFrom(searchParams.value.date)).toISOString(), 13).then(result => {
     calendarDaysAvailable.value = result;
     // console.log("calendarDaysAvailable", calendarDaysAvailable.value);
   });
@@ -337,18 +341,24 @@ const selectDate = (date: Moment) => {
   // console.log("selectedDate", selectedDate.value.format());
 };
 
+function getMondayFrom(date_str: string) {
+  const startDate = new Date(date_str);
+  if (isNaN(startDate.getTime())) {
+    throw new Error('Некорректная дата');
+  }
+
+  // Looking for monday
+  const dayOfWeek = startDate.getDay();
+  const diffToMonday = (dayOfWeek + 6) % 7;
+  const monday = new Date(startDate);
+  monday.setDate(startDate.getDate() - diffToMonday);
+
+  return monday;
+}
+
 const generateCalendar = () => {
   try {
-    const startDate = new Date(searchParams.value.date);
-    if (isNaN(startDate.getTime())) {
-      throw new Error('Некорректная дата');
-    }
-
-    // Looking for monday
-    const dayOfWeek = startDate.getDay();
-    const diffToMonday = (dayOfWeek + 6) % 7;
-    const monday = new Date(startDate);
-    monday.setDate(startDate.getDate() - diffToMonday);
+    const monday = getMondayFrom(searchParams.value.date);
 
     calendarDays.value = Array.from({length: 14}, (_, i) => {
       let tempDate = new Date(monday)
