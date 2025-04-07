@@ -21,7 +21,7 @@
 
         <div v-if="activeTab === 'simple'" class="simple-mode">
           <div class="scrollable-container">
-            <RouteList :routes="routesSimpleMode" :formatDateFunc="getFormattedMomentUserTZCombined" format="booking"
+            <RouteList :routes="routesSimpleMode" :formatDateFunc="routeItemTimeFormatting" format="booking"
                        @update-list="updateRoutes"/>
           </div>
         </div>
@@ -30,17 +30,17 @@
           <div class="calendar">
             <div
                 v-for="day in calendarDays"
-                :key="getFormattedMomentDateSimple(day.date)"
-                :class="{ 'available': isDayAvailable(day.date), 'selected': extractDateFromMoment(day.date) === extractDateFromMoment(selectedDate) }"
+                :key="formatMomentDate(day.date)"
+                :class="{ 'available': isDayAvailable(day.date), 'selected': formatMomentDate(day.date) === formatMomentDate(selectedDate) }"
                 @click="selectDate(day.date)"
             >
-              {{ formatMomentForCalendar(day.date) }}
+              {{ calendarTimeFormatting(day.date) }}
             </div>
           </div>
 
           <div class="routes-for-date">
             <div class="scrollable-container">
-              <RouteList :routes="routesForDate" :formatDateFunc="getFormattedMomentUserTZCombined" format="booking"
+              <RouteList :routes="routesForDate" :formatDateFunc="routeItemTimeFormatting" format="booking"
                          @update-list="updateRoutes"/>
             </div>
           </div>
@@ -170,49 +170,35 @@ const indicatorStyle = computed(() => {
 const mainTimeZone = 'Europe/Moscow';
 const userTimeZone = ref<string>(mainTimeZone);
 
-function getFormattedMomentDateSimple(moment: Moment) {
-  return moment.format('YYYY-MM-DD');
+function formatMomentDate(moment: Moment) {
+  return moment.clone().tz(mainTimeZone).format('YYYY-MM-DD');
 }
 
-function getFormattedMomentTimeSimple(moment: Moment) {
-  return moment.format('HH:mm');
+function formatMomentTime(moment: Moment) {
+  return moment.clone().tz(mainTimeZone).format('HH:mm');
 }
 
-function getFormattedMoment(moment: Moment) {
+function splitMoment(moment: Moment) {
   // console.log("getFormattedMoment");
-  moment = moment.tz(mainTimeZone);
+  moment = moment.clone().tz(mainTimeZone);
   return {
-    date: getFormattedMomentDateSimple(moment),
-    time: getFormattedMomentTimeSimple(moment),
+    date: formatMomentDate(moment),
+    time: formatMomentTime(moment),
   };
 }
 
-function getFormattedMomentUserTZ(moment: Moment) {
-  // console.log("getFormattedMomentUserTZCombined");
-  moment = moment.clone().tz(userTimeZone.value);
-  return {
-    date: getFormattedMomentDateSimple(moment),
-    time: getFormattedMomentTimeSimple(moment),
-  };
+function routeItemTimeFormatting(moment: Moment) {
+  return moment.clone().tz(mainTimeZone).format('YYYY-MM-DD HH:mm');
 }
 
-function getFormattedMomentUserTZCombined(moment: Moment) {
-  let dateTime = getFormattedMomentUserTZ(moment);
-  return dateTime.date + " " + dateTime.time;
-}
-
-function extractDateFromMoment(date: Moment) {
-  return date.format('YYYY-MM-DD');
-}
-
-function formatMomentForCalendar(date: Moment) {
+function calendarTimeFormatting(date: Moment) {
   return moment(date).format('DD/MM');
 }
 
 const searchParams = ref({
   from: "",
   to: '',
-  ...getFormattedMoment(moment().add(0, "days")),
+  ...splitMoment(moment().add(0, "days")),
   transportType: {
     "transport_plane": true,
     "transport_train": true,
@@ -369,7 +355,7 @@ const generateCalendar = () => {
       return {
         date: moment(date).tz(mainTimeZone),
         hasRoutes: routesSimpleMode.value.find(value => {
-          return extractDateFromMoment(value.departureTime) === extractDateFromMoment(date);
+          return formatMomentDate(value.departureTime) === formatMomentDate(date);
         }) != null
       };
     });
