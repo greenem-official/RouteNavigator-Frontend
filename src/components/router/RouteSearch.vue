@@ -147,6 +147,14 @@ import {Location} from "../../interfaces/Location.ts";
 import {ApiService} from "../../api/ApiService.ts";
 import Modal from "../general/Modal.vue";
 import {useModalStore} from "../../stores/ModalStore.ts";
+import {
+  mainTimeZone,
+  splitMoment,
+  formatMomentDate,
+  // formatMomentTime,
+  routeItemTimeFormatting,
+  calendarTimeFormatting,
+} from "../../util/TimeUtils.ts";
 
 const activeTab = ref<'simple' | 'calendar'>('simple');
 // const modalRef = ref<InstanceType<typeof Modal> | null>(null); // ref="modalRef"
@@ -155,45 +163,15 @@ const activeTab = ref<'simple' | 'calendar'>('simple');
 const modalStore = useModalStore();
 
 const containerWidth = computed(() => {
-  // console.log('containerWidth');
   return activeTab.value === 'simple' ? 600 : 720;
 });
 
 const indicatorStyle = computed(() => {
-  // console.log('indicatorStyle');
   const index = activeTab.value === 'simple' ? 0 : 1;
   return {
     transform: `translateX(${index * 100}%)`,
   };
 });
-
-const mainTimeZone = 'Europe/Moscow';
-const userTimeZone = ref<string>(mainTimeZone);
-
-function formatMomentDate(moment: Moment) {
-  return moment.clone().tz(mainTimeZone).format('YYYY-MM-DD');
-}
-
-function formatMomentTime(moment: Moment) {
-  return moment.clone().tz(mainTimeZone).format('HH:mm');
-}
-
-function splitMoment(moment: Moment) {
-  // console.log("getFormattedMoment");
-  moment = moment.clone().tz(mainTimeZone);
-  return {
-    date: formatMomentDate(moment),
-    time: formatMomentTime(moment),
-  };
-}
-
-function routeItemTimeFormatting(moment: Moment) {
-  return moment.clone().tz(mainTimeZone).format('YYYY-MM-DD HH:mm');
-}
-
-function calendarTimeFormatting(date: Moment) {
-  return moment(date).format('DD/MM');
-}
 
 const searchParams = ref({
   from: "",
@@ -243,7 +221,7 @@ const routesCalendar = ref<Record<string, Route[]>>({
 const calendarDaysAvailable = ref<Moment[]>([]);
 
 const calendarDays = ref<{ date: Moment; hasRoutes: boolean }[]>([]);
-const selectedDate = ref<Moment>(moment(new Date(searchParams.value.date)).tz(userTimeZone.value));
+const selectedDate = ref<Moment>(moment(new Date(searchParams.value.date)).tz(mainTimeZone));
 // console.log('selectedDate:', selectedDate.value); // extractDateFromMoment(selectedDate.value)
 
 function onSearchDateChange() {
@@ -320,7 +298,7 @@ const swapLocations = () => {
 
 const selectDate = (date: Moment) => {
   // console.log('Выбрана дата:', selectedDate.value);
-  const newDate = date.clone().tz(userTimeZone.value);
+  const newDate = date.clone().tz(mainTimeZone);
   selectedDate.value = newDate;
   searchRoutes(newDate, "calendar");
 
