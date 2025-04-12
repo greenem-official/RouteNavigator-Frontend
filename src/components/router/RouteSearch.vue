@@ -156,11 +156,50 @@ import {
   calendarTimeFormatting,
 } from "../../util/TimeUtils.ts";
 
-const activeTab = ref<'simple' | 'calendar'>('simple');
-// const modalRef = ref<InstanceType<typeof Modal> | null>(null); // ref="modalRef"
+// Stores
 
-// const authStore = useAuthStore();
 const modalStore = useModalStore();
+
+// Refs
+
+// Currently active mode tab
+const activeTab = ref<'simple' | 'calendar'>('simple');
+
+const searchParams = ref({ // main route search request data
+  from: "", // selected "from" location
+  to: '', // selected "to" location
+  ...splitMoment(moment().add(0, "days")), // time and day, but in calendar mode it's only a start date in the calendar mode and isn't used for requests
+  transportType: {  // selected transport types, map on the client, should be sent to the api as a list of "true" items
+    "transport_plane": true,
+    "transport_train": true,
+    "transport_bus": false,
+  }
+});
+
+// Routes by main date, simple mode data should stay even when the calendar mode is used
+const routesSimpleMode = ref<Route[]>([]);
+
+// Routes requested specifically for some date
+const routesCalendar = ref<Record<string, Route[]>>({});
+
+// Days with available tickets
+const calendarDaysAvailable = ref<Moment[]>([]);
+
+// Calendar days rendered in the "calendar"
+const calendarDays = ref<{ date: Moment; hasRoutes: boolean }[]>([]);
+
+// Currently selected custom calendar's date, not to be confused with searchParams.date and .time, which are just the start point of the custom calendar in calendar mode
+const selectedDate = ref<Moment>(moment(new Date(searchParams.value.date)).tz(mainTimeZone));
+
+// Suggestions
+
+// Suggestions for "from location"
+const firstLocationOptions = ref<Location[]>([]);
+
+// Suggestions for "to location"
+const secondLocationOptions = ref<Location[]>([]);
+
+// Dynamic properties
 
 const containerWidth = computed(() => {
   return activeTab.value === 'simple' ? 600 : 720;
@@ -173,19 +212,7 @@ const indicatorStyle = computed(() => {
   };
 });
 
-const searchParams = ref({
-  from: "",
-  to: '',
-  ...splitMoment(moment().add(0, "days")),
-  transportType: {
-    "transport_plane": true,
-    "transport_train": true,
-    "transport_bus": false,
-  }
-});
-
-const firstLocationOptions = ref<Location[]>([]);
-const secondLocationOptions = ref<Location[]>([]);
+// Initialization
 
 onMounted(async () => {
   try {
@@ -204,121 +231,6 @@ onMounted(async () => {
     console.error('Ошибка при загрузке данных:', error);
   }
 });
-
-const toggleTransportType = (type: keyof typeof searchParams.value.transportType) => {
-  searchParams.value.transportType[type] = !searchParams.value.transportType[type];
-};
-
-// Routes by main date, simple mode data should stay even when the calendar mode is used
-const routesSimpleMode = ref<Route[]>([]);
-
-// Routes requested specifically for some date
-const routesCalendar = ref<Record<string, Route[]>>({
-  // '2025-02-17': [
-  // ],
-});
-
-const calendarDaysAvailable = ref<Moment[]>([]);
-
-const calendarDays = ref<{ date: Moment; hasRoutes: boolean }[]>([]);
-const selectedDate = ref<Moment>(moment(new Date(searchParams.value.date)).tz(mainTimeZone));
-// console.log('selectedDate:', selectedDate.value); // extractDateFromMoment(selectedDate.value)
-
-function onSearchDateChange() {
-  refreshAvailableCalendarDays();
-}
-
-const refreshAvailableCalendarDays = () => {
-  ApiService.getAvailableRouteDays(searchParams, moment(getMondayFrom(searchParams.value.date)).toISOString(), 13).then(result => {
-    calendarDaysAvailable.value = result;
-    // console.log("calendarDaysAvailable", calendarDaysAvailable.value);
-  });
-};
-
-const isDayAvailable = (date: Moment): boolean => {
-  // console.log(date.format());
-  // let s = ""
-  // calendarDaysAvailable.value.forEach(value => s += value.format() + " ")
-  // console.log(s)
-  // console.log(calendarDaysAvailable.value.some((availableDate) =>
-  //     availableDate.isSame(date, 'day')
-  // ));
-  return calendarDaysAvailable.value.some((availableDate) =>
-      availableDate.isSame(date, 'day')
-  );
-};
-
-function momentToUniqueString(date: Moment | null) {
-  if (!date) return 'null';
-  return date.format('YYYY-MM-DD');
-}
-
-const routesForDate = computed(() => {
-  const result = routesCalendar.value[momentToUniqueString(selectedDate.value)];
-  // console.log("selectedDate", selectedDate.value.format())
-  // console.log("routesCalendar[date]", result);
-  if (!result) return []
-  // console.log("routesForDate", momentToUniqueString(selectedDate.value), result);
-  return result;
-});
-
-const updateRoutes = () => {
-  if (activeTab.value === 'simple') {
-    searchRoutes(null, activeTab.value);
-  } else {
-    searchRoutes(selectedDate.value, activeTab.value);
-  }
-}
-
-const searchRoutes = (mmnt: Moment | null, mode: string) => {
-  const date = momentToUniqueString(mmnt); // searchParams.value.date // selectedDate.value
-  // console.log('Поиск маршрутов', mode, date);
-  // const selectedDateOrig = selectedDate.value;
-  if (mode == 'calendar') {
-    // routesCalendar.value[date] = [];
-    ApiService.getRoutes(searchParams, selectedDate.value.toISOString(), true).then(res => {
-      routesCalendar.value[date] = res
-      // const selectedDateOrig = selectedDate.value;
-      // selectedDate.value = moment("2000-01-01");
-      // selectedDate.value = selectedDateOrig;
-    })
-  } else {
-    // routesSimpleMode.value = [];
-    const departureTimeMin = moment(searchParams.value.date).add(searchParams.value.time.split(':')[0], "hour").add(searchParams.value.time.split(':')[1], "minute").toISOString()
-    ApiService.getRoutes(searchParams, departureTimeMin, false).then(res => {
-      routesSimpleMode.value = res
-    })
-  }
-  refreshAvailableCalendarDays();
-};
-
-const swapLocations = () => {
-  [searchParams.value.from, searchParams.value.to] = [searchParams.value.to, searchParams.value.from];
-};
-
-const selectDate = (date: Moment) => {
-  // console.log('Выбрана дата:', selectedDate.value);
-  const newDate = date.clone().tz(mainTimeZone);
-  selectedDate.value = newDate;
-  searchRoutes(newDate, "calendar");
-
-  // console.log("selectedDate", selectedDate.value.format());
-};
-
-function getMondayFrom(date_str: string) {
-  const startDate = new Date(date_str);
-  if (isNaN(startDate.getTime())) {
-    throw new Error('Некорректная дата');
-  }
-
-  // Looking for monday
-  const dayOfWeek = startDate.getDay();
-  const diffToMonday = (dayOfWeek + 6) % 7;
-  const monday = new Date(startDate);
-  monday.setDate(startDate.getDate() - diffToMonday);
-
-  return monday;
-}
 
 const generateCalendar = () => {
   try {
@@ -343,6 +255,88 @@ const generateCalendar = () => {
   }
 };
 
+// Other functionality
+
+const toggleTransportType = (type: keyof typeof searchParams.value.transportType) => {
+  searchParams.value.transportType[type] = !searchParams.value.transportType[type];
+};
+
+function onSearchDateChange() {
+  refreshAvailableCalendarDays();
+}
+
+const refreshAvailableCalendarDays = () => {
+  ApiService.getAvailableRouteDays(searchParams, moment(getMondayFrom(searchParams.value.date)).toISOString(), 13).then(result => {
+    calendarDaysAvailable.value = result;
+  });
+};
+
+const isDayAvailable = (date: Moment): boolean => {
+  return calendarDaysAvailable.value.some((availableDate) =>
+      availableDate.isSame(date, 'day')
+  );
+};
+
+function momentToUniqueString(date: Moment | null) {
+  if (!date) return 'null';
+  return date.format('YYYY-MM-DD');
+}
+
+const routesForDate = computed(() => {
+  const result = routesCalendar.value[momentToUniqueString(selectedDate.value)];
+  if (!result) return [];
+  return result;
+});
+
+const updateRoutes = () => {
+  if (activeTab.value === 'simple') {
+    searchRoutes(null, activeTab.value);
+  } else {
+    searchRoutes(selectedDate.value, activeTab.value);
+  }
+}
+
+const searchRoutes = (mmnt: Moment | null, mode: string) => {
+  const date = momentToUniqueString(mmnt); // searchParams.value.date // selectedDate.value
+  if (mode == 'calendar') {
+    ApiService.getRoutes(searchParams, selectedDate.value.toISOString(), true).then(res => {
+      routesCalendar.value[date] = res
+    })
+  } else {
+    const departureTimeMin = moment(searchParams.value.date).add(searchParams.value.time.split(':')[0], "hour").add(searchParams.value.time.split(':')[1], "minute").toISOString()
+    ApiService.getRoutes(searchParams, departureTimeMin, false).then(res => {
+      routesSimpleMode.value = res
+    })
+  }
+  refreshAvailableCalendarDays();
+};
+
+const swapLocations = () => {
+  [searchParams.value.from, searchParams.value.to] = [searchParams.value.to, searchParams.value.from];
+};
+
+const selectDate = (mom: Moment) => {
+  const newDate = mom.clone().tz(mainTimeZone);
+  selectedDate.value = newDate;
+  searchRoutes(newDate, "calendar");
+};
+
+function getMondayFrom(date_str: string) {
+  const startDate = new Date(date_str);
+  if (isNaN(startDate.getTime())) {
+    throw new Error('Некорректная дата');
+  }
+
+  // Looking for monday
+  const dayOfWeek = startDate.getDay();
+  const diffToMonday = (dayOfWeek + 6) % 7;
+  const monday = new Date(startDate);
+  monday.setDate(startDate.getDate() - diffToMonday);
+
+  return monday;
+}
+
+// Re-generating the custom calendar automatically on the filter's date change
 watch(() => searchParams.value.date, generateCalendar, {immediate: true});
 </script>
 
