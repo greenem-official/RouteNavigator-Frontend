@@ -18,10 +18,6 @@ const authStore = useAuthStore();
 authStore.initializeStore();
 
 onMounted(async () => {
-  // if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-  //   document.documentElement.classList.remove('dark');
-  // }
-
   try {
     authStore.checkToken().then(value => {
       if (value) console.log(value.error);
