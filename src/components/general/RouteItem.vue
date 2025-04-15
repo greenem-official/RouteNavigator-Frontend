@@ -76,6 +76,9 @@ import {useModalStore} from "../../stores/ModalStore.ts";
 import {ApiService} from "../../api/ApiService.ts";
 import type {Booking} from "../../interfaces/Booking.ts";
 
+// This is a component of a route item, displaying a route's information and allowing to create or cancel a booking.
+// The component is usually used in RouteList
+
 interface RouteItemProps {
   route: Route | null;
   booking: Booking | null;
@@ -90,7 +93,6 @@ const localRefundTicketAmount = ref(1);
 
 function getRoute() {
   if(props.route != null) return props.route as Route;
-  // console.log(props.booking?.route)
   return props.booking?.route as Route;
 }
 

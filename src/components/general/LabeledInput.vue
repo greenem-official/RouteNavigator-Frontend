@@ -16,6 +16,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 
+// This is a component of a custom text input with a name label and some extra useful logic, such as validation
+
 const props = defineProps({
   label: { type: String, default: '' },
   type: { type: String, default: 'text' },

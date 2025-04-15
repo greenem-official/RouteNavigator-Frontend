@@ -1,6 +1,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+// This is the router component of the main website page
+
 export default defineComponent({
   name: 'MainLayout',
 });

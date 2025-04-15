@@ -2,6 +2,9 @@
 import {useAuthStore} from "../../stores/AuthStore.ts";
 import {useRouter} from "vue-router";
 
+// This is the router component of the account info page
+// Currently
+
 const router = useRouter();
 const authStore = useAuthStore();
 

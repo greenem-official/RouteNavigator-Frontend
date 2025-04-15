@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import {useModalStore} from "../../stores/ModalStore.ts";
 
+// This is a component of a Modal, meaning it's displayed over everything else on the page until you close it.
+// The component supports putting any components inside of it by using <slot /> tag.
+
 const modalStore = useModalStore();
 
 defineProps<{

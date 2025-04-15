@@ -5,6 +5,8 @@ import {translateMessage} from "../../localization/MessageTranslator.ts";
 import router from "../../../router";
 import LabeledInput from "../general/LabeledInput.vue";
 
+// This is the router component of the login / registration page
+
 const authStore = useAuthStore();
 
 const activeTab = ref<'login' | 'register'>('login');

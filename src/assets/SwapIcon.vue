@@ -5,24 +5,6 @@
     </svg>
 </template>
 
-<!--<script lang="ts">-->
-<!--import { defineComponent } from 'vue';-->
-
-<!--export default defineComponent({-->
-<!--  name: 'SwapIcon',-->
-<!--  props: {-->
-<!--    size: {-->
-<!--      type: [String, Number],-->
-<!--      default: 24,-->
-<!--    },-->
-<!--    color: {-->
-<!--      type: String,-->
-<!--      default: 'currentColor',-->
-<!--    },-->
-<!--  },-->
-<!--});-->
-<!--</script>-->
-
 <script setup lang="ts">
 
 </script>

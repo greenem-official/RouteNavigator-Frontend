@@ -26,6 +26,8 @@ import type { Route } from '../../interfaces/Route.ts';
 import type {Moment} from "moment-timezone";
 import type {Booking} from "../../interfaces/Booking.ts";
 
+// This is a scrollable list of RouteItem items, presented at the main search page and at the cancellation page.
+
 interface RouteListProps {
   routes?: Route[]
   bookings?: Booking[];

@@ -156,6 +156,8 @@ import {
   calendarTimeFormatting,
 } from "../../util/TimeUtils.ts";
 
+// This is the router component of the main route search page
+
 // Stores
 
 const modalStore = useModalStore();

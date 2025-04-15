@@ -36,6 +36,8 @@ import { useRouter } from "vue-router";
 import { defineComponent } from "vue";
 import UserIcon from "../../assets/UserIcon.vue";
 
+// The website's header
+
 export default defineComponent({
   components: {UserIcon},
   setup() {

@@ -6,7 +6,6 @@ import type {AuthData, ErrorMessage} from "../interfaces/AuthTypes.ts";
 import {useAuthStore} from "../stores/AuthStore.ts";
 import type {Booking} from "../interfaces/Booking.ts";
 import {Config} from "./Config.ts";
-// import { plainToInstance } from "class-transformer";
 
 export class ApiService {
     private static readonly API_URL = `${Config.BACKEND_URL}/api/main`;
@@ -23,9 +22,7 @@ export class ApiService {
                 headers: {},
             });
 
-            const data = response.data;
-            return data;
-            // return plainToInstance(Location, data);
+            return response.data;
         } catch (error) {
             console.error('Error fetching locations:', error);
             throw error;
@@ -44,8 +41,7 @@ export class ApiService {
                 }
             });
 
-            const data = response.data;
-            return data;
+            return response.data;
         } catch (error) {
             console.error('Error during login:', error);
             throw error;
@@ -65,8 +61,7 @@ export class ApiService {
                 }
             });
 
-            const data = response.data;
-            return data;
+            return response.data;
         } catch (error) {
             console.error('Error during register:', error);
             throw error;
@@ -84,8 +79,7 @@ export class ApiService {
                 }
             });
 
-            const data = response.data;
-            return data;
+            return response.data;
         } catch (error) {
             console.error('Error during login:', error);
             throw error;
@@ -121,7 +115,6 @@ export class ApiService {
             }
 
             return data;
-            // return plainToInstance(Location, data);
         } catch (error) {
             console.error('Error fetching routes:', error);
             throw error;
@@ -153,9 +146,7 @@ export class ApiService {
             const data = response.data;
 
             const newFormat: Moment[] = []
-            // console.log(data)
             data.forEach((item: string) => {
-                // console.log(item)
                 newFormat.push(moment(Date.parse(item))); //.format('DD-MM'))
             });
 
@@ -181,11 +172,7 @@ export class ApiService {
                 }
             });
 
-            const data = response.data;
-            // for (const route of data) {}
-
-            return data;
-            // return plainToInstance(Location, data);
+            return response.data;
         } catch (error) {
             console.error('Error booking a route:', error);
             throw error;
@@ -230,7 +217,6 @@ export class ApiService {
             }
 
             return data;
-            // return plainToInstance(Location, data);
         } catch (error) {
             console.error('Error booking a route:', error);
             throw error;

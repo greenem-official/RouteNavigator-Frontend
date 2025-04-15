@@ -5,6 +5,8 @@ import moment, {type Moment} from "moment-timezone";
 import {ApiService} from "../../api/ApiService.ts";
 import type {Booking} from "../../interfaces/Booking.ts";
 
+// This is the router component of the user's bookings page
+
 const activeBookings = ref<Booking[]>([]);
 
 function formatTime(date: string | Moment): string {
@@ -17,18 +19,8 @@ function formatTime(date: string | Moment): string {
 const refreshOrderedRoutes = () => {
   ApiService.getBookings().then(res => {
     activeBookings.value = res;
-    // console.log(res);
   });
 }
-
-// const routes = computed(() => {
-//   const routes: Route[] = []
-//   activeBookings.value.forEach((booking) => {
-//     routes.push(booking.route)
-//   })
-//
-//   return routes;
-// });
 
 onMounted(async () => {
   try {
